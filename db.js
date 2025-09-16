@@ -1,16 +1,18 @@
 // db.js
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root', // Coloque seu usuário do MySQL aqui
-    password: 'sua_senha_aqui', // Coloque sua senha do MySQL aqui
-    database: 'sistema_compras',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+// COLE A SUA URL DE CONEXÃO DO SUPABASE AQUI DENTRO DAS ASPAS
+const connectionString = 'postgresql://postgres:Gilbrinks2027@db.giamvztgxpaswawapnhx.supabase.co:5432/postgres'; 
+
+// =============================================================
+// ATENÇÃO: Lembre-se de substituir [YOUR-PASSWORD] na URL
+// pela senha que você criou no Supabase!
+// =============================================================
+
+const pool = new Pool({
+    connectionString,
 });
 
-console.log('Pool de conexões com MySQL foi criado.');
+console.log('Pool de conexões com PostgreSQL (Supabase) criado.');
 
 module.exports = pool;
