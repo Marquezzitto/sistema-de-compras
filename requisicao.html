@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisição - Sistema de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="path/to/your/logo.png" alt="Logo">
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="Dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line icon"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="requisicao.html" class="nav-link active-link">
+                        <i class="fas fa-file-alt icon"></i>
+                        <span class="text">Requisição</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="fornecedores.html" class="nav-link">
+                        <i class="fas fa-handshake icon"></i>
+                        <span class="text">Fornecedores</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="fiscal.html" class="nav-link">
+                        <i class="fas fa-receipt icon"></i>
+                        <span class="text">Fiscal</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pagamentos.html" class="nav-link">
+                        <i class="fas fa-money-bill-wave icon"></i>
+                        <span class="text">Pagamentos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="contratos.html" class="nav-link">
+                        <i class="fas fa-file-signature icon"></i>
+                        <span class="text">Contratos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="workflow.html" class="nav-link">
+                        <i class="fas fa-cogs icon"></i>
+                        <span class="text">Workflow</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <header class="main-header">
+                <div class="header-left-group">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h2>Requisição</h2>
+                </div>
+                <div class="header-right-group">
+                    <button id="toggle-requisition-form" class="add-button">
+                        <i class="fas fa-plus"></i> Requisição
+                    </button>
+                    <button id="logout-button" class="logout-btn">Sair</button>
+                </div>
+            </header>
+
+            <section class="table-section">
+                <h3>Requisições Pendentes</h3>
+                <table id="requisition-table">
+                    <thead>
+                        <tr>
+                            <th class="col-editar">Editar</th>
+                            <th class="col-tipo">Tipo</th>
+                            <th class="col-data">Data</th>
+                            <th class="col-requisicao">Requisição</th>
+                            <th class="col-fornecedor">Fornecedor</th>
+                            <th class="col-nf">NF</th>
+                            <th class="col-oc">OC</th>
+                            <th class="col-observacao">Observação</th>
+                            <th class="col-status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requisition-table-body">
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <div id="notification-container" class="notification-container"></div>
+    <script src="script.js"></script>
+</body>
+</html>
