@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('isLoggedIn');
             showNotification('Sessão encerrada.', 'success');
-            setTimeout(() => window.location.href = 'login.html', 1000);
+            setTimeout(() => window.location.href = 'index.html', 1000);
         });
     }
 
