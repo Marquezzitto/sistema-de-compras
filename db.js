@@ -9,6 +9,6 @@ const pool = new Pool({
     family: 4, // <-- A LINHA MÁGICA: Força o uso de IPv4
 });
 
-console.log('Pool de conexões com PostgreSQL (Supabase) criado, forçando IPv4.');
+console.log('Pool de conexões [VERSÃO FINAL - IPv4] criado.');
 
 module.exports = pool;
