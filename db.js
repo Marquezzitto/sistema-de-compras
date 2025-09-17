@@ -1,14 +1,14 @@
-// db.js
+// db.js - VERSÃO FINAL COM IP DIRETO
 const { Pool } = require('pg');
 
-// Cole a SUA URL de conexão completa do Supabase aqui
-const connectionString = 'postgresql://postgres:Gilbrinks2027@db.giamvztgxpaswawapnhx.supabase.co:5432/postgres'; 
-
 const pool = new Pool({
-    connectionString,
-    family: 4, // <-- A LINHA MÁGICA: Força o uso de IPv4
+    host: '34.95.76.142', // <-- O ENDEREÇO IPV4 DIRETO DO SEU BANCO DE DADOS
+    user: 'postgres.giamvztgxpaswawapnhx',
+    password: 'Gilbrinks2027',
+    database: 'postgres',
+    port: 5432,
 });
 
-console.log('Pool de conexões [VERSÃO FINAL - IPv4] criado.');
+console.log('Pool de conexões [VERSÃO IP DIRETO] criado.');
 
 module.exports = pool;
