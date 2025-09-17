@@ -1,18 +1,14 @@
 // db.js
 const { Pool } = require('pg');
 
-// COLE A SUA URL DE CONEXÃO DO SUPABASE AQUI DENTRO DAS ASPAS
+// Cole a SUA URL de conexão completa do Supabase aqui
 const connectionString = 'postgresql://postgres:Gilbrinks2027@db.giamvztgxpaswawapnhx.supabase.co:5432/postgres'; 
-
-// =============================================================
-// ATENÇÃO: Lembre-se de substituir [YOUR-PASSWORD] na URL
-// pela senha que você criou no Supabase!
-// =============================================================
 
 const pool = new Pool({
     connectionString,
+    family: 4, // <-- A LINHA MÁGICA: Força o uso de IPv4
 });
 
-console.log('Pool de conexões com PostgreSQL (Supabase) criado.');
+console.log('Pool de conexões com PostgreSQL (Supabase) criado, forçando IPv4.');
 
 module.exports = pool;
