@@ -1,17 +1,26 @@
-// db.js - VERSÃO FINAL USANDO O POOLER
-const { Pool } = require('pg');
+// db.js - VERSÃO FINAL COM MONGODB ATLAS
+const { MongoClient } = require('mongodb');
 
-// URL de conexão do Transaction Pooler com a sua senha já inserida
-const connectionString = 'postgresql://postgres.giamvztgxpaswawapnhx:Gilbrinks2027@aws-1-sa-east-1.pooler.supabase.com:6543/postgres'; 
+// COLE A SUA URL DE CONEXÃO DO MONGODB ATLAS AQUI
+const connectionString = 'mongodb+srv://marcoshmarques_db_user:Gilbrinks2027@cluster0.upp35o5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
-const pool = new Pool({
-    // Adicionamos ?sslmode=require para garantir a conexão segura
-    connectionString: `${connectionString}?sslmode=require`,
-    ssl: {
-        rejectUnauthorized: false // Correção para o erro de certificado
+const client = new MongoClient(connectionString);
+
+let dbConnection;
+
+const connectToServer = async () => {
+    try {
+        await client.connect();
+        dbConnection = client.db('sistema_compras'); // Podemos dar um nome ao nosso banco de dados
+        console.log('Conectado com sucesso ao MongoDB Atlas!');
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
     }
-});
+};
 
-console.log('Pool de conexões [VERSÃO POOLER FINAL] criado.');
+const getDb = () => {
+    return dbConnection;
+};
 
-module.exports = pool;
+module.exports = { connectToServer, getDb };
