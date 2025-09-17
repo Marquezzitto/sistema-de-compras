@@ -1,14 +1,16 @@
-// db.js - VERSÃO FINAL COM IP DIRETO
+// db.js - VERSÃO FINAL USANDO O POOLER
 const { Pool } = require('pg');
 
+// URL de conexão do Transaction Pooler com a sua senha já inserida
+const connectionString = 'postgresql://postgres.giamvztgxpaswawapnhx:Gilbrinks2027@aws-1-sa-east-1.pooler.supabase.com:6543/postgres'; 
+//                                                              ^^^^^^^^^^^^^
+//                                                          Sua senha foi inserida aqui
+
 const pool = new Pool({
-    host: '34.95.76.142', // <-- O ENDEREÇO IPV4 DIRETO DO SEU BANCO DE DADOS
-    user: 'postgres',
-    password: 'Gilbrinks2027',
-    database: 'postgres',
-    port: 5432,
+    // Adicionamos ?sslmode=require para garantir a conexão segura
+    connectionString: `${connectionString}?sslmode=require`,
 });
 
-console.log('Pool de conexões [VERSÃO FINAL CORRIGIDA] criado.');
+console.log('Pool de conexões [VERSÃO POOLER] criado.');
 
 module.exports = pool;
