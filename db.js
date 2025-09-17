@@ -1,16 +1,16 @@
-// db.js - VERSÃO FINAL USANDO O POOLER
+// db.js - VERSÃO FINAL COM CORREÇÃO DE SSL
 const { Pool } = require('pg');
 
-// URL de conexão do Transaction Pooler com a sua senha já inserida
+// Cole aqui a URL de conexão da OPÇÃO DO MEIO (Transaction Pooler) com sua senha
 const connectionString = 'postgresql://postgres.giamvztgxpaswawapnhx:Gilbrinks2027@aws-1-sa-east-1.pooler.supabase.com:6543/postgres'; 
-//                                                              ^^^^^^^^^^^^^
-//                                                          Sua senha foi inserida aqui
 
 const pool = new Pool({
-    // Adicionamos ?sslmode=require para garantir a conexão segura
     connectionString: `${connectionString}?sslmode=require`,
+    ssl: {
+        rejectUnauthorized: false // <-- A CORREÇÃO PARA O ERRO DE CERTIFICADO
+    }
 });
 
-console.log('Pool de conexões [VERSÃO POOLER] criado.');
+console.log('Pool de conexões [VERSÃO POOLER COM SSL FIX] criado.');
 
 module.exports = pool;
