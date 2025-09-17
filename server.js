@@ -14,8 +14,29 @@ app.get('/', (req, res) => {
 
 // --- API PARA USUÁRIOS (Login/Cadastro) ---
 app.post('/api/register', async (req, res) => { /* ... código já fornecido ... */ });
-app.post('/api/login', async (req, res) => { /* ... código já fornecido ... */ });
+// server.js -> substitua APENAS a rota /api/login
 
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    console.log(`[LOG 1] Recebido pedido de login para o usuário: ${username}`);
+
+    try {
+        console.log('[LOG 2] Tentando executar a consulta no banco de dados...');
+        const result = await db.query('SELECT * FROM usuarios WHERE username = $1 AND password_hash = $2', [username, password]);
+        console.log('[LOG 3] Consulta ao banco de dados concluída com sucesso.');
+
+        if (result.rows.length > 0) {
+            console.log(`[LOG 4] Usuário ${username} encontrado. Login bem-sucedido.`);
+            res.status(200).json({ message: 'Login bem-sucedido!' });
+        } else {
+            console.log(`[LOG 5] Usuário ${username} não encontrado ou senha incorreta.`);
+            res.status(401).json({ message: 'Usuário ou senha inválidos.' });
+        }
+    } catch (err) {
+        console.error('[ERRO FATAL] Ocorreu um erro dentro da rota de login:', err.stack);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
 // --- API PARA FORNECEDORES ---
 app.get('/api/fornecedores', async (req, res) => {
     try {
