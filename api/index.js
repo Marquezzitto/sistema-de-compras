@@ -38,6 +38,16 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// --- API PARA FILIAIS ---
+app.get('/api/filiais', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM filiais ORDER BY nome ASC');
+        res.json(result.rows);
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
 // --- API PARA FORNECEDORES ---
 app.get('/api/fornecedores', async (req, res) => {
     try {
