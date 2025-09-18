@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // A URL PÚBLICA do seu back-end que está rodando no Render
-    const API_URL = 'https://api-sistema-de-compras.onrender.com/api';
+    const API_URL = 'https://sistema-de-compras-production.up.railway.app/api';
 
     // Função para mostrar notificações
     const showNotification = (message, type) => {
