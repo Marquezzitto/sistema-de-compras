@@ -1,3 +1,4 @@
+alert("O arquivo script.js FOI CARREGADO!");
 // script.js - VERSÃO FINAL E COMPLETA PARA VERCEL
 document.addEventListener('DOMContentLoaded', () => {
     // Na Vercel, a API e o site rodam no mesmo domínio.
