@@ -858,3 +858,189 @@ table td {
     background-color: #27ae60;
     transform: translateY(-2px);
 }
+/* Estilo para as seções de formulário */
+.new-fornecedor-section, .new-requisicao-section, .new-contrato-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Estilo para formulários com layout mais amplo */
+.wide-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    flex-basis: 100%;
+}
+
+.form-group input, .form-group textarea, .form-group select {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    min-height: 80px;
+}
+/* Estilo para as seções de formulário */
+.new-fornecedor-section, .new-requisicao-section, .new-contrato-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Estilo para formulários com layout de grid */
+.fornecedor-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.fornecedor-form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+/* Estilo para os campos de input e select */
+.input-field, .input-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box; /* Garante que padding não altere a largura */
+}
+
+.add-button {
+    width: auto;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+/* Estilo para a seção de formulário de requisição */
+.new-requisicao-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    margin-top: 20px; /* Adiciona um espaço para não grudar no header */
+}
+
+/* Layout de grid para o formulário de requisição */
+.requisicao-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Divide o formulário em 3 colunas */
+    gap: 20px;
+}
+
+.requisicao-form-grid .input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.requisicao-form-grid .input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.requisicao-form-grid .input-group input,
+.requisicao-form-grid .input-group textarea,
+.requisicao-form-grid .input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.requisicao-form-grid .full-width {
+    grid-column: 1 / -1; /* Faz este grupo ocupar todas as colunas */
+}
+
+/* Efeito de mover o botão para o lado e transformar em "fechar" */
+.main-header {
+    transition: all 0.3s ease-in-out;
+    position: relative; /* Para que os botões se movam dentro do header */
+}
+
+.main-header.form-open .header-right-group {
+    left: 20px; /* Move o grupo de botões para a esquerda */
+}
+
+.main-header .header-right-group {
+    position: relative;
+    transition: left 0.3s ease-in-out;
+}
+/* Estilos para a seção de formulário em geral */
+.new-requisicao-section, .new-contrato-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+/* Centraliza os títulos do formulário */
+.new-requisicao-section h3, .new-contrato-section h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Layout de grid para os formulários de requisição e contratos */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
+    gap: 15px; /* Espaçamento menor entre os campos */
+}
+
+.form-grid .input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo para campos de formulário */
+.form-grid input, .form-grid textarea, .form-grid select {
+    width: 100%;
+    padding: 8px; /* Padding um pouco menor para campos mais compactos */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px; /* Fonte menor */
+    box-sizing: border-box;
+}
+
+/* Faz o grupo de Observação ocupar a largura total */
+.form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+/* Centraliza o botão "Salvar" */
+.submit-group {
+    grid-column: 1 / -1; /* Ocupa todas as colunas */
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    margin-top: 10px;
+}
+
+/* Estilo para o botão "Salvar" */
+.submit-group .add-button {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+}

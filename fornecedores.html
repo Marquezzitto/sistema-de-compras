@@ -40,41 +40,42 @@
                 </div>
             </header>
 
-            <section id="new-fornecedor-section" style="display: none;" class="new-requisition-section">
-                <div class="new-requisition-container">
-                    <form id="fornecedor-form" class="fornecedor-form-grid">
-                        <select id="fornecedor-filial" class="input-field" required>
-                            <option value="">Selecione a Filial</option>
-                            <option value="todas">Todas</option>
-                            <option value="filial_a_sp">SAO</option>
-                            <option value="filial_c_lo">LDB</option>
-                            <option value="filial_c_sj">SJK</option>
-                            <option value="filial_c_ig">IGU</option>
-                            <option value="filial_c_cx">CCX</option>
-                            <option value="filial_c_pt">PTO</option>
-                        </select>
-                        <input type="text" id="fornecedor-nome" placeholder="Nome do Fornecedor" class="input-field" required>
-                        <input type="text" id="fornecedor-cnpj" placeholder="CNPJ" class="input-field" required>
-                        <select id="fornecedor-pagamento" class="input-field" required>
-                            <option value="">Selecione o Pagamento</option>
-                            <option value="boleto">BOLETO</option>
-                            <option value="br_eletronico">BR ELETRÔNICO</option>
-                            <option value="debito_automatico">DÉBITO AUTOMÁTICO</option>
-                        </select>
-                        <input type="text" id="fornecedor-acordo" placeholder="Nº Acordo" class="input-field" required>
-                        <input type="date" id="fornecedor-inicio-vigencia" class="input-field" required>
-                        <input type="date" id="fornecedor-final-vigencia" class="input-field" required>
-                        <select id="fornecedor-acao" class="input-field" required>
-                            <option value="">Selecione a Ação</option>
-                            <option value="oracle_xml_email">ORACLE - XML - EMAIL</option>
-                            <option value="oracle_pagamentos_email">ORACLE - PAGAMENTOS - EMAIL</option>
-                            <option value="pagamentos_email">PAGAMENTOS - EMAIL</option>
-                        </select>
-                        <div class="full-width">
-                            <button type="button" id="add-fornecedor-button" class="add-button">Adicionar Fornecedor</button>
-                        </div>
-                    </form>
-                </div>
+                        <section id="new-fornecedor-section" style="display: none;" class="new-requisition-section">
+                <h3>Adicionar Novo Fornecedor</h3>
+                <form id="fornecedor-form" class="fornecedor-form-grid">
+                    <select id="fornecedor-filial" name="filial" class="input-field" required>
+                        <option value="">Selecione a Filial</option>
+                        <option value="todas">Todas</option>
+                        <option value="SAO">SAO</option>
+                        <option value="LDB">LDB</option>
+                        <option value="SJK">SJK</option>
+                        <option value="IGU">IGU</option>
+                        <option value="CCX">CCX</option>
+                        <option value="PTO">PTO</option>
+                    </select>
+                    <input type="text" id="fornecedor-nome" name="nome" placeholder="Nome do Fornecedor" class="input-field" required>
+                    <input type="text" id="fornecedor-cnpj" name="cnpj" placeholder="CNPJ" class="input-field" required>
+                    <select id="fornecedor-pagamento" name="pagamento" class="input-field" required>
+                        <option value="">Selecione o Pagamento</option>
+                        <option value="BOLETO">BOLETO</option>
+                        <option value="BR ELETRÔNICO">BR ELETRÔNICO</option>
+                        <option value="DÉBITO AUTOMÁTICO">DÉBITO AUTOMÁTICO</option>
+                    </select>
+                    <input type="text" id="fornecedor-acordo" name="acordo" placeholder="Nº Acordo" class="input-field" required>
+                    <input type="date" id="fornecedor-inicio-vigencia" name="inicioVigencia" class="input-field">
+                    <input type="date" id="fornecedor-final-vigencia" name="finalVigencia" class="input-field">
+                    <select id="fornecedor-acao" name="acao" class="input-field" required>
+                        <option value="">Selecione a Ação</option>
+                        <option value="ORACLE - XML - EMAIL">ORACLE - XML - EMAIL</option>
+                        <option value="ORACLE - PAGAMENTOS - EMAIL">ORACLE - PAGAMENTOS - EMAIL</option>
+                        <option value="PAGAMENTOS - EMAIL">PAGAMENTOS - EMAIL</option>
+                    </select>
+                    <div class="full-width">
+                        <button type="submit" id="add-fornecedor-button" class="add-button">
+                            <i class="fas fa-save"></i> Adicionar Fornecedor
+                        </button>
+                    </div>
+                </form>
             </section>
 
             <section class="content-table">
