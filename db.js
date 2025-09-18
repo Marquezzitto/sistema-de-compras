@@ -1,26 +1,16 @@
-// db.js - VERSÃO FINAL COM MONGODB ATLAS
-const { MongoClient } = require('mongodb');
+const mysql = require('mysql2/promise');
 
-// COLE A SUA URL DE CONEXÃO DO MONGODB ATLAS AQUI
-const connectionString = 'mongodb+srv://marcoshmarques_db_user:Gilbrinks2027@cluster0.upp35o5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const pool = mysql.createPool({
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
-const client = new MongoClient(connectionString);
+console.log('Pool de conexões com MySQL (Railway) criado.');
 
-let dbConnection;
-
-const connectToServer = async () => {
-    try {
-        await client.connect();
-        dbConnection = client.db('sistema_compras'); // Podemos dar um nome ao nosso banco de dados
-        console.log('Conectado com sucesso ao MongoDB Atlas!');
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
-};
-
-const getDb = () => {
-    return dbConnection;
-};
-
-module.exports = { connectToServer, getDb };
+module.exports = pool;

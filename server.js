@@ -1,8 +1,7 @@
-// server.js - VERSÃO FINAL PARA MONGODB ATLAS
+// server.js - VERSÃO FINAL PARA MySQL (Railway)
 const express = require('express');
 const cors = require('cors');
-const db = require('./db.js'); // Nosso conector para o MongoDB
-const { ObjectId } = require('mongodb'); // Ferramenta para trabalhar com IDs do MongoDB
+const db = require('./db.js'); // Nosso conector para o MySQL do Railway
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -11,99 +10,92 @@ app.use(express.json());
 
 // --- Rota de Teste ---
 app.get('/', (req, res) => {
-    res.send('API do Sistema de Compras com MongoDB está funcionando!');
+    res.send('API do Sistema de Compras com MySQL está funcionando!');
 });
 
 // --- API PARA USUÁRIOS (Login/Cadastro) ---
 app.post('/api/register', async (req, res) => {
+    const { username, password } = req.body;
     try {
-        const db_connect = db.getDb();
-        const newUser = {
-            username: req.body.username,
-            password_hash: req.body.password
-        };
-        await db_connect.collection('usuarios').insertOne(newUser);
+        // ATENÇÃO: Em um projeto real, a senha deve ser criptografada (hashed)
+        await db.query('INSERT INTO usuarios (username, password_hash) VALUES (?, ?)', [username, password]);
         res.status(201).json({ message: 'Usuário criado com sucesso!' });
     } catch (e) {
-        res.status(400).json({ message: 'Erro ao criar usuário. O nome de usuário pode já existir.' });
+        // Código 'ER_DUP_ENTRY' é específico do MySQL para entradas duplicadas
+        if (e.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ message: 'Este nome de usuário já existe.' });
+        }
+        res.status(500).json({ message: 'Erro ao criar usuário.' });
     }
 });
 
 app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
     try {
-        const db_connect = db.getDb();
-        const user = await db_connect.collection('usuarios').findOne({ username: req.body.username });
-
-        if (user && user.password_hash === req.body.password) {
+        // A sintaxe de query do mysql2 usa '?' para parâmetros
+        const [rows] = await db.query('SELECT * FROM usuarios WHERE username = ? AND password_hash = ?', [username, password]);
+        if (rows.length > 0) {
             res.status(200).json({ message: 'Login bem-sucedido!' });
         } else {
             res.status(401).json({ message: 'Usuário ou senha inválidos.' });
         }
-    } catch(e) {
-        res.status(500).json({ message: 'Erro interno no servidor.'});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
 // --- API PARA FORNECEDORES ---
 app.get('/api/fornecedores', async (req, res) => {
     try {
-        const db_connect = db.getDb();
-        // .find({}).toArray() é o novo 'SELECT * FROM fornecedores'
-        const result = await db_connect.collection('fornecedores').find({}).sort({ nome: 1 }).toArray();
-        res.json(result);
-    } catch (e) {
-        res.status(500).json({ message: 'Erro ao buscar fornecedores.' });
-    }
+        const [rows] = await db.query('SELECT * FROM fornecedores ORDER BY nome ASC');
+        res.json(rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/fornecedores', async (req, res) => {
+    const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
-        const db_connect = db.getDb();
-        const newFornecedor = req.body;
-        // .insertOne() é o novo 'INSERT INTO ...'
-        const result = await db_connect.collection('fornecedores').insertOne(newFornecedor);
-        res.status(201).json(result);
-    } catch (e) {
-        res.status(400).json({ message: 'Erro ao adicionar fornecedor.' });
-    }
+        const [result] = await db.query(
+            'INSERT INTO fornecedores (filial, nome, cnpj, pagamento, acordo, inicio_vigencia, final_vigencia, acao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [filial, nome, cnpj, pagamento, acordo, inicioVigencia || null, finalVigencia || null, acao]
+        );
+        res.status(201).json({ id: result.insertId });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.delete('/api/fornecedores/:id', async (req, res) => {
     try {
-        const db_connect = db.getDb();
-        const query = { _id: new ObjectId(req.params.id) };
-        // .deleteOne() é o novo 'DELETE FROM ...'
-        await db_connect.collection('fornecedores').deleteOne(query);
+        await db.query('DELETE FROM fornecedores WHERE id = ?', [req.params.id]);
         res.sendStatus(204); // No Content
-    } catch(e) {
-        res.status(500).json({ message: 'Erro ao deletar fornecedor.' });
-    }
+    } catch(err) { res.status(500).json({ error: err.message }); }
 });
+
 
 // --- API PARA REQUISIÇÕES ---
 app.get('/api/requisicoes/:status', async(req, res) => {
+    const { status } = req.params;
     try {
-        const db_connect = db.getDb();
-        const result = await db_connect.collection('requisicoes').find({ status: req.params.status }).toArray();
-        res.json(result);
+        const [rows] = await db.query('SELECT * FROM requisicoes WHERE status = ? ORDER BY id DESC', [status]);
+        res.json(rows);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/requisicoes', async (req, res) => {
+    const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
-        const db_connect = db.getDb();
-        const result = await db_connect.collection('requisicoes').insertOne(req.body);
-        res.status(201).json(result);
+        const [result] = await db.query(
+            'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status]
+        );
+        res.status(201).json({ id: result.insertId });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
     try {
-        const db_connect = db.getDb();
-        const query = { _id: new ObjectId(req.params.id) };
-        const newStatus = { $set: { status: req.body.status } };
-        // .updateOne() é o novo 'UPDATE ... SET ...'
-        await db_connect.collection('requisicoes').updateOne(query, newStatus);
+        await db.query('UPDATE requisicoes SET status = ? WHERE id = ?', [status, id]);
         res.status(200).json({ message: 'Status atualizado' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -111,29 +103,23 @@ app.put('/api/requisicoes/:id/status', async (req, res) => {
 // --- API PARA DASHBOARD ---
 app.get('/api/dashboard-stats', async (req, res) => {
     try {
-        const db_connect = db.getDb();
-        // .countDocuments() é o novo 'SELECT COUNT(*)'
-        const pagamentosPendentes = await db_connect.collection('requisicoes').countDocuments({ status: 'pagamento_pendente' });
-        const pagamentosRealizados = await db_connect.collection('requisicoes').countDocuments({ status: 'pago' });
-        const contratosRealizados = await db_connect.collection('contratos').countDocuments({ status: 'Ativo' });
-        const contratosPendentes = await db_connect.collection('contratos').countDocuments({ status: 'Pendente' });
+        const [pagamentosPendentes] = await db.query("SELECT COUNT(*) as count FROM requisicoes WHERE status = 'pagamento_pendente'");
+        const [pagamentosRealizados] = await db.query("SELECT COUNT(*) as count FROM requisicoes WHERE status = 'pago'");
+        const [contratosRealizados] = await db.query("SELECT COUNT(*) as count FROM contratos WHERE status = 'Ativo'"); 
+        const [contratosPendentes] = await db.query("SELECT COUNT(*) as count FROM contratos WHERE status = 'Pendente'");
 
         res.json({
-            pagamentos_pendentes: pagamentosPendentes,
-            pagamentos_realizados: pagamentosRealizados,
-            contratos_realizados: contratosRealizados,
-            contratos_pendentes: contratosPendentes,
+            pagamentos_pendentes: pagamentosPendentes[0].count,
+            pagamentos_realizados: pagamentosRealizados[0].count,
+            contratos_realizados: contratosRealizados[0].count,
+            contratos_pendentes: contratosPendentes[0].count,
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Conecta ao DB e, SOMENTE DEPOIS, inicia o servidor
-db.connectToServer().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Servidor rodando na porta ${PORT}`);
-    });
-}).catch(err => {
-    console.error("Falha ao iniciar o servidor:", err);
+
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
