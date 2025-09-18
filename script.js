@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Na Vercel, a API e o site rodam no mesmo domínio.
+    // --- CONFIGURAÇÃO ---
     const API_URL = '/api';
 
     // --- FUNÇÃO DE NOTIFICAÇÃO ---
@@ -18,9 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- FUNÇÃO GLOBAL DE FETCH ---
-    async function fetchData(endpoint) {
+    async function fetchData(endpoint, params = {}) {
+        const url = new URL(`${window.location.origin}${API_URL}/${endpoint}`);
+        if (Object.keys(params).length > 0) {
+            url.search = new URLSearchParams(params).toString();
+        }
         try {
-            const response = await fetch(`${API_URL}/${endpoint}`);
+            const response = await fetch(url);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Erro ${response.status}`);
@@ -33,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LOGIN E CADASTRO ---
+    // --- LOGIN ---
     const loginButton = document.getElementById('login-button');
     if (loginButton) {
         loginButton.addEventListener('click', async () => {
@@ -47,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message);
-                
+
                 localStorage.setItem('isLoggedIn', 'true');
                 showNotification('Login bem-sucedido!', 'success');
                 setTimeout(() => window.location.href = 'Dashboard.html', 1000);
@@ -57,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- CADASTRO ---
     const registerButton = document.getElementById('register-button');
     if (registerButton) {
         registerButton.addEventListener('click', async () => {
@@ -79,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA GLOBAL ---
+    // --- LOGOUT ---
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -88,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => window.location.href = 'index.html', 1000);
         });
     }
-    
+
+    // --- MENU LATERAL ---
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     if (menuToggle && sidebar) {
@@ -100,34 +106,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DASHBOARD ---
     async function setupDashboard() {
-        try {
-            const stats = await fetchData('dashboard-stats');
-            document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
-            document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
-            document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
-            document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
-        } catch(err) {
-            console.error("Falha ao carregar estatísticas do dashboard", err);
-        }
-
-        // --- COMPLEMENTO: Modal de Filiais ---
         const filialBtn = document.getElementById('open-filial-modal');
         const filialModal = document.getElementById('filial-modal');
         const closeBtn = document.querySelector('.modal .close-btn');
         const filialList = document.getElementById('filial-list');
         const filialText = document.getElementById('filial-display-name');
 
+        async function updateDashboardCards() {
+            const filialSelecionada = localStorage.getItem('selectedFilial') || 'todas';
+            try {
+                const stats = await fetchData('dashboard-stats', { filial: filialSelecionada });
+                document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
+                document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
+                document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
+                document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
+            } catch (err) {
+                console.error("Falha ao carregar estatísticas do dashboard", err);
+            }
+        }
+
         if (filialBtn && filialModal && filialList) {
             const filiaisDoBanco = await fetchData('filiais');
             filialList.innerHTML = '';
 
-            // Opção "Todas"
             const todasLi = document.createElement('li');
             todasLi.dataset.value = 'todas';
             todasLi.textContent = 'Todas';
             filialList.appendChild(todasLi);
 
-            // Filiais do banco
             filiaisDoBanco.forEach(filial => {
                 const li = document.createElement('li');
                 li.dataset.value = filial.nome;
@@ -145,11 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (event.target.tagName === 'LI') {
                     const selectedFilial = event.target.dataset.value;
                     localStorage.setItem('selectedFilial', selectedFilial);
-                    if(filialText) filialText.textContent = event.target.textContent;
+                    if (filialText) filialText.textContent = event.target.textContent;
                     filialModal.style.display = 'none';
+                    updateDashboardCards();
                 }
             });
+
+            const filialSalva = localStorage.getItem('selectedFilial') || 'todas';
+            filialText.textContent = filialSalva === 'todas' ? 'Todas' : filialSalva;
         }
+
+        updateDashboardCards();
     }
 
     // --- FORNECEDORES ---
@@ -159,8 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const fornecedorForm = document.getElementById('fornecedor-form');
         if (!fornecedoresTableBody) return;
 
-        const renderFornecedoresTable = async () => {
-            const fornecedores = await fetchData('fornecedores');
+        async function renderFornecedoresTable() {
+            const filialSelecionada = localStorage.getItem('selectedFilial') || 'todas';
+            const fornecedores = await fetchData('fornecedores', { filial: filialSelecionada });
             fornecedoresTableBody.innerHTML = '';
             fornecedores.forEach(f => {
                 const row = fornecedoresTableBody.insertRow();
@@ -180,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><button class="delete-btn"><i class="fas fa-trash-alt"></i></button></td>
                 `;
             });
-        };
+        }
 
         if (addFornecedorBtn) {
             addFornecedorBtn.addEventListener('click', async () => {
@@ -209,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        
+
         fornecedoresTableBody.addEventListener('click', async (event) => {
             const target = event.target.closest('button.delete-btn');
             if (target) {
@@ -226,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        
+
         renderFornecedoresTable();
     }
 
@@ -235,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         if (!requisitionTableBody) return;
 
-        const renderRequisitionsTable = async () => {
+        async function renderRequisitionsTable() {
             const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
             requisicoes.forEach(req => {
@@ -257,18 +270,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                 `;
             });
-        };
+        }
 
         requisitionTableBody.addEventListener('click', async (event) => {
             const target = event.target;
             const id = target.closest('tr')?.dataset.id;
-            if(!id) return;
+            if (!id) return;
 
             let novoStatus = '';
-            if(target.classList.contains('approve-btn')) novoStatus = 'aprovado';
-            if(target.classList.contains('reject-btn')) novoStatus = 'rejeitado';
-            
-            if(novoStatus) {
+            if (target.classList.contains('approve-btn')) novoStatus = 'aprovado';
+            if (target.classList.contains('reject-btn')) novoStatus = 'rejeitado';
+
+            if (novoStatus) {
                 try {
                     await fetch(`${API_URL}/requisicoes/${id}/status`, {
                         method: 'PUT',
@@ -277,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     showNotification(`Requisição ${novoStatus}!`, 'success');
                     renderRequisitionsTable();
-                } catch(err) {
+                } catch (err) {
                     showNotification('Falha ao atualizar status.', 'error');
                 }
             }
@@ -299,5 +312,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (page === 'requisicao.html') {
         setupRequisicao();
     }
-    // Adicione aqui as outras páginas conforme forem criadas
 });
