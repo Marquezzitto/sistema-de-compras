@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- CONFIGURAÇÃO ---
+    // Na Vercel, a API e o site rodam no mesmo domínio.
     const API_URL = '/api';
 
     // --- FUNÇÃO DE NOTIFICAÇÃO ---
@@ -18,13 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- FUNÇÃO GLOBAL DE FETCH ---
-    async function fetchData(endpoint, params = {}) {
-        const url = new URL(`${window.location.origin}${API_URL}/${endpoint}`);
-        if (Object.keys(params).length > 0) {
-            url.search = new URLSearchParams(params).toString();
-        }
+    async function fetchData(endpoint) {
         try {
-            const response = await fetch(url);
+            const response = await fetch(`${API_URL}/${endpoint}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Erro ${response.status}`);
@@ -37,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LOGIN ---
+    // --- LOGIN E CADASTRO ---
     const loginButton = document.getElementById('login-button');
     if (loginButton) {
         loginButton.addEventListener('click', async () => {
@@ -51,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message);
-
+                
                 localStorage.setItem('isLoggedIn', 'true');
                 showNotification('Login bem-sucedido!', 'success');
                 setTimeout(() => window.location.href = 'Dashboard.html', 1000);
@@ -61,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- CADASTRO ---
     const registerButton = document.getElementById('register-button');
     if (registerButton) {
         registerButton.addEventListener('click', async () => {
@@ -84,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LOGOUT ---
+    // --- LÓGICA GLOBAL ---
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -93,8 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => window.location.href = 'index.html', 1000);
         });
     }
-
-    // --- MENU LATERAL ---
+    
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     if (menuToggle && sidebar) {
@@ -106,34 +100,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DASHBOARD ---
     async function setupDashboard() {
+        try {
+            const stats = await fetchData('dashboard-stats');
+            document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
+            document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
+            document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
+            document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
+        } catch(err) {
+            console.error("Falha ao carregar estatísticas do dashboard", err);
+        }
+
+        // --- COMPLEMENTO: Modal de Filiais ---
         const filialBtn = document.getElementById('open-filial-modal');
         const filialModal = document.getElementById('filial-modal');
         const closeBtn = document.querySelector('.modal .close-btn');
         const filialList = document.getElementById('filial-list');
         const filialText = document.getElementById('filial-display-name');
 
-        async function updateDashboardCards() {
-            const filialSelecionada = localStorage.getItem('selectedFilial') || 'todas';
-            try {
-                const stats = await fetchData('dashboard-stats', { filial: filialSelecionada });
-                document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
-                document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
-                document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
-                document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
-            } catch (err) {
-                console.error("Falha ao carregar estatísticas do dashboard", err);
-            }
-        }
-
         if (filialBtn && filialModal && filialList) {
             const filiaisDoBanco = await fetchData('filiais');
             filialList.innerHTML = '';
 
+            // Opção "Todas"
             const todasLi = document.createElement('li');
             todasLi.dataset.value = 'todas';
             todasLi.textContent = 'Todas';
             filialList.appendChild(todasLi);
 
+            // Filiais do banco
             filiaisDoBanco.forEach(filial => {
                 const li = document.createElement('li');
                 li.dataset.value = filial.nome;
@@ -151,17 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (event.target.tagName === 'LI') {
                     const selectedFilial = event.target.dataset.value;
                     localStorage.setItem('selectedFilial', selectedFilial);
-                    if (filialText) filialText.textContent = event.target.textContent;
+                    if(filialText) filialText.textContent = event.target.textContent;
                     filialModal.style.display = 'none';
-                    updateDashboardCards();
                 }
             });
-
-            const filialSalva = localStorage.getItem('selectedFilial') || 'todas';
-            filialText.textContent = filialSalva === 'todas' ? 'Todas' : filialSalva;
         }
-
-        updateDashboardCards();
     }
 
     // --- FORNECEDORES ---
@@ -171,9 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const fornecedorForm = document.getElementById('fornecedor-form');
         if (!fornecedoresTableBody) return;
 
-        async function renderFornecedoresTable() {
-            const filialSelecionada = localStorage.getItem('selectedFilial') || 'todas';
-            const fornecedores = await fetchData('fornecedores', { filial: filialSelecionada });
+        const renderFornecedoresTable = async () => {
+            const fornecedores = await fetchData('fornecedores');
             fornecedoresTableBody.innerHTML = '';
             fornecedores.forEach(f => {
                 const row = fornecedoresTableBody.insertRow();
@@ -193,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><button class="delete-btn"><i class="fas fa-trash-alt"></i></button></td>
                 `;
             });
-        }
+        };
 
         if (addFornecedorBtn) {
             addFornecedorBtn.addEventListener('click', async () => {
@@ -222,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
+        
         fornecedoresTableBody.addEventListener('click', async (event) => {
             const target = event.target.closest('button.delete-btn');
             if (target) {
@@ -239,16 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-
+        
+        fornecedoresTableBody.addEventListener('click', async (event) => {
+            const editTarget = event.target.closest('button.edit-btn');
+            if (editTarget) {
+                const row = editTarget.closest('tr');
+                const id = row.dataset.id;
+                // Lógica para abrir um modal de edição e preencher os campos com os dados da linha
+                // Você precisará de um formulário de edição (provavelmente um modal)
+                showNotification(`Lógica de edição para o fornecedor ${id} será implementada aqui.`, 'info');
+            }
+        });
+        
         renderFornecedoresTable();
     }
 
     // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
-        if (!requisitionTableBody) return;
+        const requisicaoModal = document.getElementById('requisicao-modal');
+        const requisicaoForm = document.getElementById('requisicao-form');
+        const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
+        const closeRequisicaoBtn = requisicaoModal ? requisicaoModal.querySelector('.close-btn') : null;
 
-        async function renderRequisitionsTable() {
+        const renderRequisitionsTable = async () => {
             const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
             requisicoes.forEach(req => {
@@ -261,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${data}</td>
                     <td>${req.requisicao || ''}</td>
                     <td>${req.fornecedor || ''}</td>
+                    <td>${req.filial || ''}</td>
                     <td>${req.nf || ''}</td>
                     <td>${req.oc || ''}</td>
                     <td>${req.observacao || ''}</td>
@@ -270,18 +272,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                 `;
             });
+        };
+
+        if (requisicaoModal && requisicaoForm && addRequisicaoBtn && closeRequisicaoBtn) {
+            addRequisicaoBtn.addEventListener('click', () => {
+                requisicaoForm.reset();
+                requisicaoModal.style.display = 'block';
+            });
+
+            closeRequisicaoBtn.addEventListener('click', () => {
+                requisicaoModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === requisicaoModal) {
+                    requisicaoModal.style.display = 'none';
+                }
+            });
+
+            requisicaoForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(requisicaoForm);
+                const requisicaoData = Object.fromEntries(formData.entries());
+
+                try {
+                    await fetch(`${API_URL}/requisicoes`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requisicaoData)
+                    });
+                    showNotification('Requisição adicionada!', 'success');
+                    requisicaoModal.style.display = 'none';
+                    renderRequisitionsTable();
+                } catch (error) {
+                    showNotification('Falha ao adicionar requisição.', 'error');
+                }
+            });
         }
 
         requisitionTableBody.addEventListener('click', async (event) => {
             const target = event.target;
             const id = target.closest('tr')?.dataset.id;
-            if (!id) return;
+            if(!id) return;
 
             let novoStatus = '';
-            if (target.classList.contains('approve-btn')) novoStatus = 'aprovado';
-            if (target.classList.contains('reject-btn')) novoStatus = 'rejeitado';
-
-            if (novoStatus) {
+            if(target.classList.contains('approve-btn')) novoStatus = 'aprovado';
+            if(target.classList.contains('reject-btn')) novoStatus = 'rejeitado';
+            
+            if(novoStatus) {
                 try {
                     await fetch(`${API_URL}/requisicoes/${id}/status`, {
                         method: 'PUT',
@@ -290,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     showNotification(`Requisição ${novoStatus}!`, 'success');
                     renderRequisitionsTable();
-                } catch (err) {
+                } catch(err) {
                     showNotification('Falha ao atualizar status.', 'error');
                 }
             }
@@ -299,6 +337,50 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRequisitionsTable();
     }
 
+    // --- CONTRATOS ---
+    async function setupContratos() {
+        const contratoModal = document.getElementById('contrato-modal');
+        const contratoForm = document.getElementById('contrato-form');
+        const addContratoBtn = document.getElementById('toggle-contrato-form');
+        const closeContratoBtn = contratoModal ? contratoModal.querySelector('.close-btn') : null;
+
+        if (contratoModal && contratoForm && addContratoBtn && closeContratoBtn) {
+            addContratoBtn.addEventListener('click', () => {
+                contratoForm.reset();
+                contratoModal.style.display = 'block';
+            });
+
+            closeContratoBtn.addEventListener('click', () => {
+                contratoModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === contratoModal) {
+                    contratoModal.style.display = 'none';
+                }
+            });
+
+            contratoForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(contratoForm);
+                const contratoData = Object.fromEntries(formData.entries());
+
+                try {
+                    await fetch(`${API_URL}/contratos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(contratoData)
+                    });
+                    showNotification('Contrato adicionado!', 'success');
+                    contratoModal.style.display = 'none';
+                    // Adicionar lógica de renderização da tabela de contratos aqui, se houver
+                } catch (error) {
+                    showNotification('Falha ao adicionar contrato.', 'error');
+                }
+            });
+        }
+    }
+    
     // --- ROTEADOR ---
     const path = window.location.pathname;
     const page = path.split("/").pop();
@@ -311,5 +393,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFornecedores();
     } else if (page === 'requisicao.html') {
         setupRequisicao();
+    } else if (page === 'contratos.html') {
+        setupContratos();
     }
+    // Adicione aqui as outras páginas conforme forem criadas
 });
