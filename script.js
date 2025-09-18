@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Na Vercel, a API e o site rodam no mesmo domínio.
-    // Usamos um caminho relativo que funciona automaticamente.
     const API_URL = '/api';
 
-    // Sua função de notificação (continua a mesma)
+    // --- FUNÇÃO DE NOTIFICAÇÃO ---
     const showNotification = (message, type) => {
         const container = document.getElementById('notification-container');
         if (!container) return;
@@ -18,7 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // --- LÓGICA DE LOGIN E CADASTRO ---
+    // --- FUNÇÃO GLOBAL DE FETCH ---
+    async function fetchData(endpoint) {
+        try {
+            const response = await fetch(`${API_URL}/${endpoint}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Erro ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`Falha ao buscar dados de ${endpoint}:`, error);
+            showNotification(error.message, 'error');
+            return [];
+        }
+    }
+
+    // --- LOGIN E CADASTRO ---
     const loginButton = document.getElementById('login-button');
     if (loginButton) {
         loginButton.addEventListener('click', async () => {
@@ -63,8 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-    // --- LÓGICA GLOBAL (PÁGINAS INTERNAS) ---
+
+    // --- LÓGICA GLOBAL ---
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -83,33 +98,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Função genérica para buscar dados da API
-    async function fetchData(endpoint) {
-        try {
-            const response = await fetch(`${API_URL}/${endpoint}`);
-            if (!response.ok) throw new Error(`Erro ao buscar dados de ${endpoint}`);
-            return await response.json();
-        } catch (error) {
-            console.error(error);
-            showNotification(error.message, 'error');
-            return [];
-        }
-    }
-
-    // --- FUNÇÕES DE SETUP PARA CADA PÁGINA ---
-    
+    // --- DASHBOARD ---
     async function setupDashboard() {
-       try {
+        try {
             const stats = await fetchData('dashboard-stats');
             document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
             document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
             document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
             document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
         } catch(err) {
-            console.error("Falha ao carregar estatísticas do dashboard");
+            console.error("Falha ao carregar estatísticas do dashboard", err);
+        }
+
+        // --- COMPLEMENTO: Modal de Filiais ---
+        const filialBtn = document.getElementById('open-filial-modal');
+        const filialModal = document.getElementById('filial-modal');
+        const closeBtn = document.querySelector('.modal .close-btn');
+        const filialList = document.getElementById('filial-list');
+        const filialText = document.getElementById('filial-display-name');
+
+        if (filialBtn && filialModal && filialList) {
+            const filiaisDoBanco = await fetchData('filiais');
+            filialList.innerHTML = '';
+
+            // Opção "Todas"
+            const todasLi = document.createElement('li');
+            todasLi.dataset.value = 'todas';
+            todasLi.textContent = 'Todas';
+            filialList.appendChild(todasLi);
+
+            // Filiais do banco
+            filiaisDoBanco.forEach(filial => {
+                const li = document.createElement('li');
+                li.dataset.value = filial.nome;
+                li.textContent = filial.nome;
+                filialList.appendChild(li);
+            });
+
+            filialBtn.addEventListener('click', () => filialModal.style.display = 'block');
+            if (closeBtn) closeBtn.addEventListener('click', () => filialModal.style.display = 'none');
+            window.addEventListener('click', (event) => {
+                if (event.target === filialModal) filialModal.style.display = 'none';
+            });
+
+            filialList.addEventListener('click', (event) => {
+                if (event.target.tagName === 'LI') {
+                    const selectedFilial = event.target.dataset.value;
+                    localStorage.setItem('selectedFilial', selectedFilial);
+                    if(filialText) filialText.textContent = event.target.textContent;
+                    filialModal.style.display = 'none';
+                }
+            });
         }
     }
 
+    // --- FORNECEDORES ---
     async function setupFornecedores() {
         const fornecedoresTableBody = document.getElementById('fornecedores-table-body');
         const addFornecedorBtn = document.getElementById('add-fornecedor-button');
@@ -123,8 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = fornecedoresTableBody.insertRow();
                 const inicioVigencia = f.inicio_vigencia ? new Date(f.inicio_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
                 const finalVigencia = f.final_vigencia ? new Date(f.final_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-                row.dataset.id = f.id; // Usando o ID do banco
-
+                row.dataset.id = f.id;
                 row.innerHTML = `
                     <td><button class="edit-btn"><i class="fas fa-edit"></i></button></td>
                     <td>${f.filial || ''}</td>
@@ -188,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFornecedoresTable();
     }
 
+    // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         if (!requisitionTableBody) return;
@@ -243,18 +286,18 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRequisitionsTable();
     }
 
-    // --- ROTEADOR: DECIDE QUAL FUNÇÃO EXECUTAR ---
-    // Esta é a nova lógica, mais robusta, para identificar a página
+    // --- ROTEADOR ---
     const path = window.location.pathname;
-    const page = path.split("/").pop(); // Pega a última parte da URL, ex: "Dashboard.html"
+    const page = path.split("/").pop();
 
-    // Roda a função correspondente à página atual
-    if (page === 'Dashboard.html' || page === '') { // Adicionado '|| page === ""' para a página inicial
-        setupDashboard();
+    if (page === 'Dashboard.html' || page === '' || page === 'index.html') {
+        if (document.body.querySelector('.status-cards')) {
+            setupDashboard();
+        }
     } else if (page === 'fornecedores.html') {
         setupFornecedores();
     } else if (page === 'requisicao.html') {
         setupRequisicao();
     }
-    // ... adicione as outras páginas aqui (fiscal.html, pagamentos.html, etc.)
+    // Adicione aqui as outras páginas conforme forem criadas
 });
