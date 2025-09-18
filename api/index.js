@@ -74,6 +74,21 @@ app.delete('/api/fornecedores/:id', async (req, res) => {
     } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+// Nova rota para editar fornecedores
+app.put('/api/fornecedores/:id', async (req, res) => {
+    const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
+    const { id } = req.params;
+    try {
+        await db.query(
+            'UPDATE fornecedores SET filial = $1, nome = $2, cnpj = $3, pagamento = $4, acordo = $5, inicio_vigencia = $6, final_vigencia = $7, acao = $8 WHERE id = $9',
+            [filial, nome, cnpj, pagamento, acordo, inicioVigencia || null, finalVigencia || null, acao, id]
+        );
+        res.status(200).json({ message: 'Fornecedor atualizado com sucesso!' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- API PARA REQUISIÇÕES ---
 app.get('/api/requisicoes/:status', async(req, res) => {
     const { status } = req.params;
@@ -83,6 +98,7 @@ app.get('/api/requisicoes/:status', async(req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
@@ -100,6 +116,18 @@ app.put('/api/requisicoes/:id/status', async (req, res) => {
     try {
         await db.query('UPDATE requisicoes SET status = $1 WHERE id = $2', [status, id]);
         res.status(200).json({ message: 'Status atualizado' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// --- API PARA CONTRATOS (Adicionar novo contrato) ---
+app.post('/api/contratos', async (req, res) => {
+    const { numero, fornecedor, inicio, fim, valor, status } = req.body;
+    try {
+        const result = await db.query(
+            'INSERT INTO contratos (numero, fornecedor, inicio, fim, valor, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+            [numero, fornecedor, inicio, fim, valor, status]
+        );
+        res.status(201).json({ id: result.rows[0].id });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
