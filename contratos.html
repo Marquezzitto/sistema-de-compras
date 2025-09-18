@@ -124,6 +124,35 @@
         </main>
     </div>
     <div id="notification-container" class="notification-container"></div>
+    
+    <div id="contrato-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Adicionar Novo Contrato</h2>
+            <form id="contrato-form">
+                <label for="contrato-numero">Número:</label>
+                <input type="text" id="contrato-numero" name="numero" required>
+                
+                <label for="contrato-fornecedor">Fornecedor:</label>
+                <input type="text" id="contrato-fornecedor" name="fornecedor">
+                
+                <label for="contrato-inicio">Início:</label>
+                <input type="date" id="contrato-inicio" name="inicio" required>
+                
+                <label for="contrato-fim">Fim:</label>
+                <input type="date" id="contrato-fim" name="fim" required>
+                
+                <label for="contrato-valor">Valor:</label>
+                <input type="text" id="contrato-valor" name="valor">
+                
+                <label for="contrato-status">Status:</label>
+                <input type="text" id="contrato-status" name="status">
+
+                <button type="submit" id="add-contrato-submit-btn">Adicionar</button>
+            </form>
+        </div>
+    </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
