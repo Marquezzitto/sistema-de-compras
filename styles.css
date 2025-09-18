@@ -672,6 +672,7 @@ table td {
     align-items: center; /* Alinha o ícone e o texto verticalmente no centro */
     padding: 12px 0; /* Remova o padding horizontal aqui, ele será controlado pelos sub-elementos */
     color: white;
+    padding-left: 50px;
     text-decoration: none;
     transition: background-color 0.3s ease, color 0.3s ease;
     width: 100%; /* Garante que o link ocupe toda a largura do <li> */
