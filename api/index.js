@@ -134,13 +134,42 @@ app.post('/api/requisicoes', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.put('/api/requisicoes/:id/status', async (req, res) => {
+// --- API PARA REQUISIÇÕES ---
+// ... seu código app.get, app.post, app.put existente ...
+
+// Nova rota para aprovar e direcionar a requisição
+app.put('/api/requisicoes/:id/aprovar', async (req, res) => {
     const { id } = req.params;
-    const { status } = req.body;
     try {
-        await db.query('UPDATE requisicoes SET status = $1 WHERE id = $2', [status, id]);
-        res.status(200).json({ message: 'Status atualizado' });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        // 1. Encontrar o fornecedor da requisição
+        const requisicaoResult = await db.query('SELECT fornecedor FROM requisicoes WHERE id = $1', [id]);
+        if (requisicaoResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Requisição não encontrada.' });
+        }
+        const fornecedorNome = requisicaoResult.rows[0].fornecedor;
+        
+        // 2. Encontrar a ação do fornecedor
+        const fornecedorResult = await db.query('SELECT acao FROM fornecedores WHERE nome = $1', [fornecedorNome]);
+        if (fornecedorResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Fornecedor não encontrado.' });
+        }
+        const acaoFornecedor = fornecedorResult.rows[0].acao;
+
+        // 3. Decidir o novo status baseado na ação
+        let novoStatus = 'pagamento_pendente';
+        if (acaoFornecedor.includes('XML')) {
+            novoStatus = 'fiscal_xml';
+        } else if (acaoFornecedor.includes('PAGAMENTO')) {
+            novoStatus = 'fiscal_pagamento';
+        }
+
+        // 4. Atualizar o status da requisição
+        await db.query('UPDATE requisicoes SET status = $1 WHERE id = $2', [novoStatus, id]);
+        res.status(200).json({ message: `Requisição aprovada e direcionada para ${novoStatus}!` });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // --- API PARA CONTRATOS (AJUSTADA PARA FILTRAR POR FILIAL) ---
