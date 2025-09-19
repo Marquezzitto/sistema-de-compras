@@ -142,15 +142,24 @@ app.get('/api/requisicoes/:status', async(req, res) => {
 });
 
 // Rota de criação de requisição
+// Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
+    
+    // Log para depuração: verifique se os dados estão chegando corretamente
+    console.log('Dados recebidos para nova requisição:', { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status });
+
     try {
         const result = await db.query(
             'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
             [tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status]
         );
         res.status(201).json({ id: result.rows[0].id });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        // Agora, se houver um erro no banco de dados, o Vercel vai registrar
+        console.error('Erro na inserção da requisição:', err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
