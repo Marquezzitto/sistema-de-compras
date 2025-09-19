@@ -365,10 +365,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const requisicaoFormSection = document.getElementById('new-requisicao-section');
         const requisicaoForm = document.getElementById('requisicao-form');
         const mainHeader = document.querySelector('.main-header');
+        const requisicaoFilialSelect = document.getElementById('requisicao-filial');
+
+        // Função para adicionar uma única linha à tabela
+        const addRequisitionToTable = (req) => {
+            const row = requisitionTableBody.insertRow(0); // Adiciona no início da tabela
+            row.dataset.id = req.id;
+            const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+            
+            const isNFandOCFilled = req.nf && req.oc;
+            const approveButtonHtml = isNFandOCFilled 
+                ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
+                : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
+
+            row.innerHTML = `
+                <td><button class="edit-btn">✏️</button></td>
+                <td>${req.tipo || ''}</td>
+                <td>${data}</td>
+                <td>${req.requisicao || ''}</td>
+                <td>${req.fornecedor || ''}</td>
+                <td>${req.filial || ''}</td>
+                <td>${req.nf || ''}</td>
+                <td>${req.oc || ''}</td>
+                <td>${req.observacao || ''}</td>
+                <td>
+                    ${approveButtonHtml}
+                    <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
+                </td>
+            `;
+        };
 
         const renderFilialSelect = async () => {
             const filiais = await fetchData('filiais');
-            const requisicaoFilialSelect = document.getElementById('requisicao-filial');
             if (requisicaoFilialSelect) {
                 filiais.forEach(filial => {
                     const option = document.createElement('option');
@@ -382,7 +410,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await renderFilialSelect();
 
         const renderRequisitionsTable = async () => {
-            const requisicoes = await fetchData('requisicoes/pendentes');
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const requisicoes = await fetchData('requisicoes/pendentes', params);
+            
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -391,32 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            requisicoes.forEach(req => {
-                const row = requisitionTableBody.insertRow();
-                row.dataset.id = req.id;
-                const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-                
-                const isNFandOCFilled = req.nf && req.oc;
-                const approveButtonHtml = isNFandOCFilled 
-                    ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
-                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
-
-                row.innerHTML = `
-                    <td><button class="edit-btn">✏️</button></td>
-                    <td>${req.tipo || ''}</td>
-                    <td>${data}</td>
-                    <td>${req.requisicao || ''}</td>
-                    <td>${req.fornecedor || ''}</td>
-                    <td>${req.filial || ''}</td>
-                    <td>${req.nf || ''}</td>
-                    <td>${req.oc || ''}</td>
-                    <td>${req.observacao || ''}</td>
-                    <td>
-                        ${approveButtonHtml}
-                        <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
-                    </td>
-                `;
-            });
+            requisicoes.forEach(req => addRequisitionToTable(req));
         };
 
         if (addRequisicaoBtn && requisicaoFormSection) {
@@ -440,18 +446,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const requisicaoData = Object.fromEntries(formData.entries());
 
                 try {
-                    await fetch(`${API_URL}/requisicoes`, {
+                    // Modificação aqui: aguarda a resposta e a converte para JSON
+                    const response = await fetch(`${API_URL}/requisicoes`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(requisicaoData)
                     });
+                    
+                    if (!response.ok) {
+                        throw new Error('Falha na resposta do servidor.');
+                    }
+                    
+                    const newRequisition = await response.json(); // Pega o objeto retornado
+                    
                     showNotification('Requisição adicionada!', 'success');
                     requisicaoForm.reset();
                     requisicaoFormSection.style.display = 'none';
                     mainHeader.classList.remove('form-open');
-                    renderRequisitionsTable();
+
+                    // Chama a nova função para adicionar a linha diretamente
+                    addRequisitionToTable(newRequisition);
+
                 } catch (error) {
-                    showNotification('Falha ao adicionar requisição.', 'error');
+                    console.error('Erro ao adicionar requisição:', error);
+                    showNotification(`Falha ao adicionar requisição: ${error.message}`, 'error');
                 }
             });
         }
