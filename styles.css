@@ -1259,5 +1259,14 @@ table td {
 .suggestions-list li:hover {
     background-color: #f0f0f0;
 }
+/* Estilos para os ícones de status */
+.status-icon.approve-btn {
+    color: #2ecc71; /* Verde para o vezinho */
+    cursor: pointer;
+}
 
+.status-icon.reject-btn {
+    color: #e74c3c; /* Vermelho para o X */
+    cursor: pointer;
+}
 /* FIM DAS ADIÇÕES */
