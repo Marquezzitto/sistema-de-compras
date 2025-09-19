@@ -18,9 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- FUNÇÃO GLOBAL DE FETCH ---
-    async function fetchData(endpoint) {
+    async function fetchData(endpoint, params = {}) {
+        const queryParams = new URLSearchParams(params).toString();
+        const fullEndpoint = `${endpoint}${queryParams ? '?' + queryParams : ''}`;
+
         try {
-            const response = await fetch(`${API_URL}/${endpoint}`);
+            const response = await fetch(`${API_URL}/${fullEndpoint}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Erro ${response.status}`);
@@ -167,9 +170,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const addFornecedorBtn = document.getElementById('toggle-fornecedor-form');
         const fornecedorFormSection = document.getElementById('new-fornecedor-section');
         const fornecedorForm = document.getElementById('fornecedor-form');
+        const filialText = document.getElementById('filial-display-name');
 
         const renderFornecedoresTable = async () => {
-            const fornecedores = await fetchData('fornecedores');
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const fornecedores = await fetchData('fornecedores', params);
+            
             fornecedoresTableBody.innerHTML = '';
             
             if (fornecedores.length === 0) {
@@ -270,7 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
 
         const renderRequisitionsTable = async () => {
-            const requisicoes = await fetchData('requisicoes/pendentes');
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const requisicoes = await fetchData('requisicoes/pendentes', params);
+            
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -379,7 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
 
         const renderContratosTable = async () => {
-            const contratos = await fetchData('contratos');
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const contratos = await fetchData('contratos', params);
+            
             contratosTableBody.innerHTML = '';
 
             if (contratos.length === 0) {
@@ -391,10 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
             contratos.forEach(contrato => {
                 const row = contratosTableBody.insertRow();
                 row.dataset.id = contrato.id;
-                const inicio = contrato.inicio_vigencia ? new Date(contrato.inicio_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-                const fim = contrato.final_vigencia ? new Date(contrato.final_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                const inicio = contrato.inicio ? new Date(contrato.inicio).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                const fim = contrato.fim ? new Date(contrato.fim).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
                 row.innerHTML = `
-                    <td>${contrato.numero_contrato || ''}</td>
+                    <td>${contrato.numero || ''}</td>
                     <td>${contrato.fornecedor || ''}</td>
                     <td>${inicio}</td>
                     <td>${fim}</td>
