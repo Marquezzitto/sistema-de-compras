@@ -464,7 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
     const page = path.split("/").pop();
 
-    // Carrega a filial salva do localStorage em todas as páginas
     loadSelectedFilialFromStorage();
 
     if (page === 'Dashboard.html' || page === '' || page === 'index.html') {
