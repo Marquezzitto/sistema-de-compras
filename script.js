@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Na Vercel, a API e o site rodam no mesmo domínio.
-    const API_URL = '/api';
+    const API_URL = 'http://localhost:3000/api';
 
     // --- FUNÇÃO DE NOTIFICAÇÃO ---
     const showNotification = (message, type) => {
@@ -164,157 +164,149 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-// --- FORNECEDORES ---
-async function setupFornecedores() {
-    const fornecedoresTableBody = document.getElementById('fornecedores-table-body');
-    const addFornecedorBtn = document.getElementById('toggle-fornecedor-form');
-    const fornecedorFormSection = document.getElementById('new-fornecedor-section');
-    const fornecedorForm = document.getElementById('fornecedor-form');
-    const mainHeader = document.querySelector('.main-header');
+    // --- FORNECEDORES ---
+    async function setupFornecedores() {
+        const fornecedoresTableBody = document.getElementById('fornecedores-table-body');
+        const addFornecedorBtn = document.getElementById('toggle-fornecedor-form');
+        const fornecedorFormSection = document.getElementById('new-fornecedor-section');
+        const fornecedorForm = document.getElementById('fornecedor-form');
+        const mainHeader = document.querySelector('.main-header');
+        let editingFornecedorId = null;
 
-    const renderFornecedoresTable = async () => {
-        const selectedFilial = localStorage.getItem('selectedFilial');
-        const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
-        const fornecedores = await fetchData('fornecedores', params);
-        
-        fornecedoresTableBody.innerHTML = '';
-        
-        if (fornecedores.length === 0) {
-            const emptyRow = fornecedoresTableBody.insertRow();
-            emptyRow.innerHTML = `<td colspan="10" class="empty-message">Nenhum fornecedor encontrado para a filial selecionada.</td>`;
-            return;
+        const renderFornecedoresTable = async () => {
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const fornecedores = await fetchData('fornecedores', params);
+            
+            fornecedoresTableBody.innerHTML = '';
+            
+            if (fornecedores.length === 0) {
+                const emptyRow = fornecedoresTableBody.insertRow();
+                emptyRow.innerHTML = `<td colspan="10" class="empty-message">Nenhum fornecedor encontrado para a filial selecionada.</td>`;
+                return;
+            }
+
+            fornecedores.forEach(f => {
+                const row = fornecedoresTableBody.insertRow();
+                const inicioVigencia = f.inicio_vigencia ? new Date(f.inicio_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                const finalVigencia = f.final_vigencia ? new Date(f.final_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                row.dataset.id = f.id;
+                row.innerHTML = `
+                    <td><button class="edit-btn" data-id="${f.id}"><i class="fas fa-edit"></i></button></td>
+                    <td>${f.filial || ''}</td>
+                    <td>${f.nome || ''}</td>
+                    <td>${f.cnpj || ''}</td>
+                    <td>${f.pagamento || ''}</td>
+                    <td>${f.acordo || ''}</td>
+                    <td>${inicioVigencia}</td>
+                    <td>${finalVigencia}</td>
+                    <td>${f.acao || ''}</td>
+                    <td><button class="delete-btn" data-id="${f.id}"><i class="fas fa-trash-alt"></i></button></td>
+                `;
+            });
+        };
+
+        if (addFornecedorBtn && fornecedorFormSection) {
+            addFornecedorBtn.addEventListener('click', () => {
+                const isFormVisible = fornecedorFormSection.style.display === 'block';
+                fornecedorFormSection.style.display = isFormVisible ? 'none' : 'block';
+                
+                if (isFormVisible) {
+                    mainHeader.classList.remove('form-open');
+                    fornecedorForm.reset();
+                } else {
+                    mainHeader.classList.add('form-open');
+                }
+            });
         }
 
-        fornecedores.forEach(f => {
-            const row = fornecedoresTableBody.insertRow();
-            const inicioVigencia = f.inicio_vigencia ? new Date(f.inicio_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-            const finalVigencia = f.final_vigencia ? new Date(f.final_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-            row.dataset.id = f.id;
-            row.innerHTML = `
-                <td><button class="edit-btn" data-id="${f.id}"><i class="fas fa-edit"></i></button></td>
-                <td>${f.filial || ''}</td>
-                <td>${f.nome || ''}</td>
-                <td>${f.cnpj || ''}</td>
-                <td>${f.pagamento || ''}</td>
-                <td>${f.acordo || ''}</td>
-                <td>${inicioVigencia}</td>
-                <td>${finalVigencia}</td>
-                <td>${f.acao || ''}</td>
-                <td><button class="delete-btn" data-id="${f.id}"><i class="fas fa-trash-alt"></i></button></td>
-            `;
-        });
-    };
-    
-    // Variável para armazenar o ID do fornecedor em edição
-    let editingFornecedorId = null;
+        if (fornecedorForm) {
+            fornecedorForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(fornecedorForm);
+                const fornecedorData = Object.fromEntries(formData.entries());
+                
+                try {
+                    let method = 'POST';
+                    let endpoint = `${API_URL}/fornecedores`;
 
-    if (addFornecedorBtn && fornecedorFormSection) {
-        addFornecedorBtn.addEventListener('click', () => {
-            const isFormVisible = fornecedorFormSection.style.display === 'block';
-            fornecedorFormSection.style.display = isFormVisible ? 'none' : 'block';
-            
-            if (isFormVisible) {
-                mainHeader.classList.remove('form-open');
-                fornecedorForm.reset();
-            } else {
+                    if (editingFornecedorId) {
+                        method = 'PUT';
+                        endpoint = `${API_URL}/fornecedores/${editingFornecedorId}`;
+                    }
+
+                    await fetch(endpoint, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(fornecedorData)
+                    });
+                    showNotification(`Fornecedor ${editingFornecedorId ? 'atualizado' : 'adicionado'}!`, 'success');
+                    fornecedorForm.reset();
+                    fornecedorFormSection.style.display = 'none';
+                    renderFornecedoresTable();
+                    editingFornecedorId = null; // Reseta o ID de edição
+                } catch (error) {
+                    showNotification('Falha ao salvar fornecedor.', 'error');
+                }
+            });
+        }
+        
+        fornecedoresTableBody.addEventListener('click', async (event) => {
+            const deleteTarget = event.target.closest('button.delete-btn');
+            if (deleteTarget) {
+                const id = deleteTarget.dataset.id;
+                if (confirm('Tem certeza que deseja excluir este fornecedor?')) {
+                    try {
+                        await fetch(`${API_URL}/fornecedores/${id}`, { method: 'DELETE' });
+                        showNotification('Fornecedor excluído com sucesso!', 'success');
+                        renderFornecedoresTable();
+                    } catch (error) {
+                        showNotification('Falha ao excluir o fornecedor.', 'error');
+                    }
+                }
+            }
+        });
+
+        fornecedoresTableBody.addEventListener('click', async (event) => {
+            const editTarget = event.target.closest('button.edit-btn');
+            if (editTarget) {
+                const id = editTarget.dataset.id;
+                showNotification(`Editando fornecedor ID: ${id}`, 'info');
+                
+                const row = editTarget.closest('tr');
+                document.getElementById('fornecedor-filial').value = row.cells[1].textContent;
+                document.getElementById('fornecedor-nome').value = row.cells[2].textContent;
+                document.getElementById('fornecedor-cnpj').value = row.cells[3].textContent;
+                document.getElementById('fornecedor-pagamento').value = row.cells[4].textContent;
+                document.getElementById('fornecedor-acordo').value = row.cells[5].textContent;
+                
+                const inicioVigencia = row.cells[6].textContent;
+                if (inicioVigencia) {
+                    const parts = inicioVigencia.split('/');
+                    document.getElementById('fornecedor-inicio-vigencia').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                } else {
+                    document.getElementById('fornecedor-inicio-vigencia').value = '';
+                }
+
+                const finalVigencia = row.cells[7].textContent;
+                if (finalVigencia) {
+                    const parts = finalVigencia.split('/');
+                    document.getElementById('fornecedor-final-vigencia').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                } else {
+                    document.getElementById('fornecedor-final-vigencia').value = '';
+                }
+                
+                document.getElementById('fornecedor-acao').value = row.cells[8].textContent;
+                
+                editingFornecedorId = id;
+                
+                fornecedorFormSection.style.display = 'block';
                 mainHeader.classList.add('form-open');
             }
         });
+        
+        renderFornecedoresTable();
     }
-
-    if (fornecedorForm) {
-        fornecedorForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const formData = new FormData(fornecedorForm);
-            const fornecedorData = Object.fromEntries(formData.entries());
-            
-            // A filial agora vem diretamente do formulário, não precisa adicionar manualmente
-
-            try {
-                let method = 'POST';
-                let endpoint = `${API_URL}/fornecedores`;
-
-                if (editingFornecedorId) {
-                    method = 'PUT';
-                    endpoint = `${API_URL}/fornecedores/${editingFornecedorId}`;
-                }
-
-                await fetch(endpoint, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(fornecedorData)
-                });
-                showNotification(`Fornecedor ${editingFornecedorId ? 'atualizado' : 'adicionado'}!`, 'success');
-                fornecedorForm.reset();
-                fornecedorFormSection.style.display = 'none';
-                renderFornecedoresTable();
-                editingFornecedorId = null; // Reseta o ID de edição
-            } catch (error) {
-                showNotification('Falha ao salvar fornecedor.', 'error');
-            }
-        });
-    }
-    
-    fornecedoresTableBody.addEventListener('click', async (event) => {
-        const deleteTarget = event.target.closest('button.delete-btn');
-        if (deleteTarget) {
-            const id = deleteTarget.dataset.id;
-            if (confirm('Tem certeza que deseja excluir este fornecedor?')) {
-                try {
-                    await fetch(`${API_URL}/fornecedores/${id}`, { method: 'DELETE' });
-                    showNotification('Fornecedor excluído com sucesso!', 'success');
-                    renderFornecedoresTable();
-                } catch (error) {
-                    showNotification('Falha ao excluir o fornecedor.', 'error');
-                }
-            }
-        }
-    });
-
-    fornecedoresTableBody.addEventListener('click', async (event) => {
-        const editTarget = event.target.closest('button.edit-btn');
-        if (editTarget) {
-            const id = editTarget.dataset.id;
-            showNotification(`Editando fornecedor ID: ${id}`, 'info');
-            
-            // Lógica para preencher o formulário
-            const row = editTarget.closest('tr');
-            document.getElementById('fornecedor-filial').value = row.cells[1].textContent;
-            document.getElementById('fornecedor-nome').value = row.cells[2].textContent;
-            document.getElementById('fornecedor-cnpj').value = row.cells[3].textContent;
-            document.getElementById('fornecedor-pagamento').value = row.cells[4].textContent;
-            document.getElementById('fornecedor-acordo').value = row.cells[5].textContent;
-            
-            // Converte a data do formato dd/mm/yyyy para yyyy-mm-dd
-            const inicioVigencia = row.cells[6].textContent;
-            if (inicioVigencia) {
-                const parts = inicioVigencia.split('/');
-                document.getElementById('fornecedor-inicio-vigencia').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            } else {
-                document.getElementById('fornecedor-inicio-vigencia').value = '';
-            }
-
-            const finalVigencia = row.cells[7].textContent;
-            if (finalVigencia) {
-                const parts = finalVigencia.split('/');
-                document.getElementById('fornecedor-final-vigencia').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            } else {
-                document.getElementById('fornecedor-final-vigencia').value = '';
-            }
-            
-            document.getElementById('fornecedor-acao').value = row.cells[8].textContent;
-            
-            // Armazena o ID para a submissão do formulário
-            editingFornecedorId = id;
-            
-            // Mostra o formulário de edição
-            fornecedorFormSection.style.display = 'block';
-            mainHeader.classList.add('form-open');
-        }
-    });
-    
-    renderFornecedoresTable();
-}
 
     // --- REQUISIÇÕES ---
     async function setupRequisicao() {
@@ -325,10 +317,7 @@ async function setupFornecedores() {
         const mainHeader = document.querySelector('.main-header');
 
         const renderRequisitionsTable = async () => {
-            const selectedFilial = localStorage.getItem('selectedFilial');
-            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
-            const requisicoes = await fetchData('requisicoes/pendentes', params);
-            
+            const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -437,10 +426,7 @@ async function setupFornecedores() {
         const mainHeader = document.querySelector('.main-header');
 
         const renderContratosTable = async () => {
-            const selectedFilial = localStorage.getItem('selectedFilial');
-            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
-            const contratos = await fetchData('contratos', params);
-            
+            const contratos = await fetchData('contratos');
             contratosTableBody.innerHTML = '';
 
             if (contratos.length === 0) {
@@ -488,11 +474,6 @@ async function setupFornecedores() {
                 event.preventDefault();
                 const formData = new FormData(contratoForm);
                 const contratoData = Object.fromEntries(formData.entries());
-
-                const filialSelecionada = localStorage.getItem('selectedFilial');
-                if (filialSelecionada) {
-                    contratoData.filial = filialSelecionada;
-                }
 
                 try {
                     await fetch(`${API_URL}/contratos`, {
