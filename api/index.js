@@ -69,6 +69,25 @@ app.get('/api/fornecedores', async (req, res) => {
     }
 });
 
+// NOVA ROTA PARA BUSCA DE FORNECEDORES (AUTOCOMPLETE)
+app.get('/api/fornecedores/search', async (req, res) => {
+    const { query } = req.query;
+    if (!query) {
+        return res.status(400).json({ message: 'O parâmetro de busca "query" é obrigatório.' });
+    }
+
+    try {
+        const result = await db.query(
+            'SELECT nome, cnpj, filial FROM fornecedores WHERE nome ILIKE $1 ORDER BY nome ASC',
+            [`%${query}%`]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 app.post('/api/fornecedores', async (req, res) => {
     const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
@@ -134,8 +153,14 @@ app.post('/api/requisicoes', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// --- API PARA REQUISIÇÕES ---
-// ... seu código app.get, app.post, app.put existente ...
+app.put('/api/requisicoes/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+        await db.query('UPDATE requisicoes SET status = $1 WHERE id = $2', [status, id]);
+        res.status(200).json({ message: 'Status atualizado' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
 
 // Nova rota para aprovar e direcionar a requisição
 app.put('/api/requisicoes/:id/aprovar', async (req, res) => {

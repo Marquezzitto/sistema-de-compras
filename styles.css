@@ -1044,3 +1044,35 @@ table td {
     padding: 10px 20px;
     font-size: 14px;
 }
+/* Estilo para o container do autocomplete */
+.autocomplete-container {
+    position: relative; /* Para que a lista de sugestões fique por cima do resto */
+}
+
+/* Estilo para a lista de sugestões */
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Posiciona a lista abaixo do input */
+    left: 0;
+    right: 0;
+    z-index: 10; /* Garante que a lista fique visível */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
