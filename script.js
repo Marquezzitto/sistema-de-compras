@@ -19,8 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÃO GLOBAL DE FETCH ---
     async function fetchData(endpoint) {
+        const selectedFilial = localStorage.getItem('selectedFilial');
+        let fullEndpoint = endpoint;
+        
+        // Adiciona o filtro de filial à URL, se houver uma selecionada
+        if (selectedFilial && selectedFilial !== 'todas') {
+            const separator = endpoint.includes('?') ? '&' : '?';
+            fullEndpoint += `${separator}filial=${selectedFilial}`;
+        }
+        
         try {
-            const response = await fetch(`${API_URL}/${endpoint}`);
+            const response = await fetch(`${API_URL}/${fullEndpoint}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Erro ${response.status}`);
@@ -191,6 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const formData = new FormData(fornecedorForm);
                 const fornecedorData = Object.fromEntries(formData.entries());
+                
+                // Adiciona a filial salva do LocalStorage
+                const filialSelecionada = localStorage.getItem('selectedFilial');
+                if (filialSelecionada) {
+                    fornecedorData.filial = filialSelecionada;
+                }
 
                 try {
                     await fetch(`${API_URL}/fornecedores`, {
@@ -237,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFornecedoresTable();
     }
 
-        // --- REQUISIÇÕES ---
+    // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
@@ -258,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${data}</td>
                     <td>${req.requisicao || ''}</td>
                     <td>${req.fornecedor || ''}</td>
+                    <td>${req.filial || ''}</td>
                     <td>${req.nf || ''}</td>
                     <td>${req.oc || ''}</td>
                     <td>${req.observacao || ''}</td>
@@ -288,6 +304,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const formData = new FormData(requisicaoForm);
                 const requisicaoData = Object.fromEntries(formData.entries());
+
+                // Adiciona a filial salva do LocalStorage
+                const filialSelecionada = localStorage.getItem('selectedFilial');
+                if (filialSelecionada) {
+                    requisicaoData.filial = filialSelecionada;
+                }
 
                 try {
                     await fetch(`${API_URL}/requisicoes`, {
@@ -383,6 +405,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const formData = new FormData(contratoForm);
                 const contratoData = Object.fromEntries(formData.entries());
+
+                // Adiciona a filial salva do LocalStorage
+                const filialSelecionada = localStorage.getItem('selectedFilial');
+                if (filialSelecionada) {
+                    contratoData.filial = filialSelecionada;
+                }
 
                 try {
                     await fetch(`${API_URL}/contratos`, {
