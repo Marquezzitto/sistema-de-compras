@@ -316,10 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
 
         const renderRequisitionsTable = async () => {
-            const selectedFilial = localStorage.getItem('selectedFilial');
-            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
-            const requisicoes = await fetchData('requisicoes/pendentes', params);
-            
+            const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -369,11 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const formData = new FormData(requisicaoForm);
                 const requisicaoData = Object.fromEntries(formData.entries());
-
-                const filialSelecionada = localStorage.getItem('selectedFilial');
-                if (filialSelecionada) {
-                    requisicaoData.filial = filialSelecionada;
-                }
 
                 try {
                     await fetch(`${API_URL}/requisicoes`, {
