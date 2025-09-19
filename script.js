@@ -42,6 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- LÓGICA DE PERSISTÊNCIA DE FILIAL ---
+    function loadSelectedFilialFromStorage() {
+        const selectedFilial = localStorage.getItem('selectedFilial');
+        const filialText = document.getElementById('filial-display-name');
+        
+        if (filialText && selectedFilial) {
+            filialText.textContent = selectedFilial.toUpperCase();
+        }
+    }
+
     // --- LOGIN E CADASTRO ---
     const loginButton = document.getElementById('login-button');
     if (loginButton) {
@@ -153,6 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('selectedFilial', selectedFilial);
                     if(filialText) filialText.textContent = event.target.textContent;
                     filialModal.style.display = 'none';
+                    // Recarrega a página para aplicar o filtro imediatamente
+                    window.location.reload(); 
                 }
             });
         }
@@ -201,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData(fornecedorForm);
                 const fornecedorData = Object.fromEntries(formData.entries());
                 
-                // Adiciona a filial salva do LocalStorage
                 const filialSelecionada = localStorage.getItem('selectedFilial');
                 if (filialSelecionada) {
                     fornecedorData.filial = filialSelecionada;
@@ -305,7 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData(requisicaoForm);
                 const requisicaoData = Object.fromEntries(formData.entries());
 
-                // Adiciona a filial salva do LocalStorage
                 const filialSelecionada = localStorage.getItem('selectedFilial');
                 if (filialSelecionada) {
                     requisicaoData.filial = filialSelecionada;
@@ -406,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData(contratoForm);
                 const contratoData = Object.fromEntries(formData.entries());
 
-                // Adiciona a filial salva do LocalStorage
                 const filialSelecionada = localStorage.getItem('selectedFilial');
                 if (filialSelecionada) {
                     contratoData.filial = filialSelecionada;
@@ -454,6 +463,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ROTEADOR ---
     const path = window.location.pathname;
     const page = path.split("/").pop();
+
+    // Carrega a filial salva do localStorage em todas as páginas
+    loadSelectedFilialFromStorage();
 
     if (page === 'Dashboard.html' || page === '' || page === 'index.html') {
         if (document.body.querySelector('.status-cards')) {
