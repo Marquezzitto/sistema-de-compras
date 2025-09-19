@@ -215,4 +215,3 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
 // Exporta o app para a Vercel usar
 module.exports = app;
-
