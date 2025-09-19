@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Na Vercel, a API e o site rodam no mesmo domínio.
+    // A URL da API é dinâmica e se ajusta ao ambiente
     const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
 
     // --- FUNÇÃO DE NOTIFICAÇÃO ---
@@ -157,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('selectedFilial', selectedFilial);
                     if(filialText) filialText.textContent = event.target.textContent;
                     filialModal.style.display = 'none';
-                    // Recarrega a página para aplicar o filtro imediatamente
                     window.location.reload(); 
                 }
             });
@@ -225,9 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const formData = new FormData(fornecedorForm);
                 const fornecedorData = Object.fromEntries(formData.entries());
-
-                console.log('Dados do formulário sendo enviados:', fornecedorData); // ✅ Linha adicionada
-
+                
                 try {
                     let method = 'POST';
                     let endpoint = `${API_URL}/fornecedores`;
@@ -251,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showNotification('Falha ao salvar fornecedor.', 'error');
                 }
             });
-
         }
         
         fornecedoresTableBody.addEventListener('click', async (event) => {
@@ -320,7 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
 
         const renderRequisitionsTable = async () => {
-            const requisicoes = await fetchData('requisicoes/pendentes');
+            const selectedFilial = localStorage.getItem('selectedFilial');
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+            const requisicoes = await fetchData('requisicoes/pendentes', params);
+            
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
