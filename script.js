@@ -329,6 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = requisitionTableBody.insertRow();
                 row.dataset.id = req.id;
                 const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                
+                // Verifica se NF e OC estão preenchidos para habilitar o botão
+                const isNFandOCFilled = req.nf && req.oc;
+                const approveButtonHtml = isNFandOCFilled 
+                    ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
+                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`; // Desabilitado
+
                 row.innerHTML = `
                     <td><button class="edit-btn">✏️</button></td>
                     <td>${req.tipo || ''}</td>
@@ -340,8 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${req.oc || ''}</td>
                     <td>${req.observacao || ''}</td>
                     <td>
-                        <span class="status-icon approve-btn" style="cursor:pointer;">✔️</span>
-                        <span class="status-icon reject-btn" style="cursor:pointer;">✖️</span>
+                        ${approveButtonHtml}
+                        <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
                     </td>
                 `;
             });
@@ -404,6 +411,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderRequisitionsTable();
                 } catch(err) {
                     showNotification('Falha ao atualizar status.', 'error');
+                }
+            }
+
+            // Nova lógica para o botão de aprovar
+            if(target.classList.contains('approve-btn')) {
+                const requisicaoId = target.dataset.id;
+                try {
+                    const response = await fetch(`${API_URL}/requisicoes/${requisicaoId}/aprovar`, {
+                        method: 'PUT'
+                    });
+                    if(response.ok) {
+                        showNotification('Requisição aprovada e direcionada!', 'success');
+                        renderRequisitionsTable();
+                    } else {
+                        const errorData = await response.json();
+                        showNotification(errorData.message || 'Erro ao aprovar requisição.', 'error');
+                    }
+                } catch(err) {
+                    showNotification('Falha de comunicação com o servidor.', 'error');
                 }
             }
         });
