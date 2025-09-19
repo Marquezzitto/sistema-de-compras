@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Na Vercel, a API e o site rodam no mesmo domínio.
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
 
     // --- FUNÇÃO DE NOTIFICAÇÃO ---
     const showNotification = (message, type) => {
