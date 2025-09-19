@@ -313,7 +313,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
         const requisicaoFormSection = document.getElementById('new-requisicao-section');
         const requisicaoForm = document.getElementById('requisicao-form');
+        const requisicaoFilialSelect = document.getElementById('requisicao-filial');
         const mainHeader = document.querySelector('.main-header');
+
+        // Função para renderizar a lista de filiais no dropdown
+        const renderFilialSelect = async () => {
+            const filiais = await fetchData('filiais');
+            if (requisicaoFilialSelect) {
+                filiais.forEach(filial => {
+                    const option = document.createElement('option');
+                    option.value = filial.nome;
+                    option.textContent = filial.nome;
+                    requisicaoFilialSelect.appendChild(option);
+                });
+            }
+        };
+        
+        // Chama a função de renderização de filiais
+        await renderFilialSelect();
 
         const renderRequisitionsTable = async () => {
             const requisicoes = await fetchData('requisicoes/pendentes');
@@ -330,11 +347,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.dataset.id = req.id;
                 const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
                 
-                // Verifica se NF e OC estão preenchidos para habilitar o botão
                 const isNFandOCFilled = req.nf && req.oc;
                 const approveButtonHtml = isNFandOCFilled 
                     ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
-                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`; // Desabilitado
+                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
 
                 row.innerHTML = `
                     <td><button class="edit-btn">✏️</button></td>
@@ -413,30 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     showNotification('Falha ao atualizar status.', 'error');
                 }
             }
-
-            // Nova lógica para o botão de aprovar
-            if(target.classList.contains('approve-btn')) {
-                const requisicaoId = target.dataset.id;
-                try {
-                    const response = await fetch(`${API_URL}/requisicoes/${requisicaoId}/aprovar`, {
-                        method: 'PUT'
-                    });
-                    if(response.ok) {
-                        showNotification('Requisição aprovada e direcionada!', 'success');
-                        renderRequisitionsTable();
-                    } else {
-                        const errorData = await response.json();
-                        showNotification(errorData.message || 'Erro ao aprovar requisição.', 'error');
-                    }
-                } catch(err) {
-                    showNotification('Falha de comunicação com o servidor.', 'error');
-                }
-            }
         });
 
         renderRequisitionsTable();
     }
-
     // --- CONTRATOS ---
     async function setupContratos() {
         const contratosTableBody = document.getElementById('contratos-table-body');
