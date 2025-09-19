@@ -45,6 +45,55 @@ document.addEventListener('DOMContentLoaded', () => {
             filialText.textContent = selectedFilial.toUpperCase();
         }
     }
+    
+    // --- LÓGICA DO AUTOCOMPLETE ---
+    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector, otherFields) {
+        const inputElement = document.getElementById(inputSelector);
+        const suggestionsElement = document.getElementById(suggestionsSelector);
+
+        if (!inputElement || !suggestionsElement) return;
+
+        inputElement.addEventListener('input', async () => {
+            const query = inputElement.value;
+            if (query.length < 3) {
+                suggestionsElement.innerHTML = '';
+                return;
+            }
+
+            const fornecedores = await fetchData('fornecedores/search', { query: query });
+            suggestionsElement.innerHTML = '';
+            
+            if (fornecedores.length > 0) {
+                fornecedores.forEach(fornecedor => {
+                    const li = document.createElement('li');
+                    li.textContent = `${fornecedor.nome} - CNPJ: ${fornecedor.cnpj}`;
+                    li.dataset.nome = fornecedor.nome;
+                    li.dataset.cnpj = fornecedor.cnpj;
+                    li.dataset.filial = fornecedor.filial;
+                    suggestionsElement.appendChild(li);
+                });
+            }
+        });
+
+        suggestionsElement.addEventListener('click', (event) => {
+            const selectedItem = event.target.closest('li');
+            if (selectedItem) {
+                document.getElementById(inputSelector).value = selectedItem.dataset.nome;
+                
+                const cnpjInput = document.getElementById('fornecedor-cnpj');
+                if (cnpjInput) {
+                    cnpjInput.value = selectedItem.dataset.cnpj;
+                }
+
+                const filialInput = document.getElementById('fornecedor-filial');
+                if (filialInput) {
+                    filialInput.value = selectedItem.dataset.filial;
+                }
+                
+                suggestionsElement.innerHTML = '';
+            }
+        });
+    }
 
     // --- LOGIN E CADASTRO ---
     const loginButton = document.getElementById('login-button');
@@ -108,57 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
             menuToggle.classList.toggle('open');
-        });
-    }
-
-    // --- LÓGICA DO AUTOCOMPLETE ---
-    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector) {
-        const inputElement = document.getElementById(inputSelector);
-        const suggestionsElement = document.getElementById(suggestionsSelector);
-
-        if (!inputElement || !suggestionsElement) return;
-
-        inputElement.addEventListener('input', async () => {
-            const query = inputElement.value;
-            if (query.length < 3) {
-                suggestionsElement.innerHTML = '';
-                return;
-            }
-
-            const fornecedores = await fetchData('fornecedores/search', { query: query });
-            suggestionsElement.innerHTML = '';
-            
-            if (fornecedores.length > 0) {
-                fornecedores.forEach(fornecedor => {
-                    const li = document.createElement('li');
-                    li.textContent = `${fornecedor.nome} - CNPJ: ${fornecedor.cnpj}`;
-                    li.dataset.nome = fornecedor.nome;
-                    li.dataset.cnpj = fornecedor.cnpj;
-                    li.dataset.filial = fornecedor.filial;
-                    suggestionsElement.appendChild(li);
-                });
-            }
-        });
-
-        suggestionsElement.addEventListener('click', (event) => {
-            const selectedItem = event.target.closest('li');
-            if (selectedItem) {
-                document.getElementById(inputSelector).value = selectedItem.dataset.nome;
-                
-                // Preenche o campo de CNPJ
-                const cnpjInput = document.getElementById(inputSelector === 'fornecedor-nome' ? 'fornecedor-cnpj' : 'requisicao-cnpj');
-                if (cnpjInput) {
-                    cnpjInput.value = selectedItem.dataset.cnpj;
-                }
-
-                // Preenche o campo de filial, se existir
-                const filialInput = document.getElementById(inputSelector === 'fornecedor-nome' ? 'fornecedor-filial' : 'requisicao-filial');
-                if (filialInput) {
-                    filialInput.value = selectedItem.dataset.filial;
-                }
-                
-                suggestionsElement.innerHTML = ''; // Limpa as sugestões
-            }
         });
     }
 
@@ -356,6 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         renderFornecedoresTable();
+        setupFornecedorAutocomplete('fornecedor-nome', 'fornecedor-nome-suggestions');
+        setupFornecedorAutocomplete('fornecedor-cnpj', 'fornecedor-cnpj-suggestions');
     }
 
     // --- REQUISIÇÕES ---
@@ -365,6 +365,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const requisicaoFormSection = document.getElementById('new-requisicao-section');
         const requisicaoForm = document.getElementById('requisicao-form');
         const mainHeader = document.querySelector('.main-header');
+
+        const renderFilialSelect = async () => {
+            const filiais = await fetchData('filiais');
+            const requisicaoFilialSelect = document.getElementById('requisicao-filial');
+            if (requisicaoFilialSelect) {
+                filiais.forEach(filial => {
+                    const option = document.createElement('option');
+                    option.value = filial.nome;
+                    option.textContent = filial.nome;
+                    requisicaoFilialSelect.appendChild(option);
+                });
+            }
+        };
+        
+        await renderFilialSelect();
 
         const renderRequisitionsTable = async () => {
             const requisicoes = await fetchData('requisicoes/pendentes');
@@ -466,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         renderRequisitionsTable();
+        setupFornecedorAutocomplete('requisicao-fornecedor', 'requisicao-fornecedor-suggestions');
     }
 
     // --- CONTRATOS ---

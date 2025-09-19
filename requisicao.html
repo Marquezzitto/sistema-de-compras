@@ -1,308 +1,155 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
-
-<cabeça>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="largura=largura-do-dispositivo, escala-inicial=1.0">
-
-    <title>Requisição - Sistema de Compras</title>
-
-    <link rel="folha de estilo" href="styles.css">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisição - Sistema de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-
-<corpo>
-
-    <div class="container">
-
-        <aside class="barra lateral" id="barra lateral">
-
-            <div class="logo-container">
-
-                <img src="assets/brinks-logo-white.png" alt="Logo da Brinks">
-
-            </div>
-
-            <ul class="nav-links">
-
-                <li>
-
-                    <a href="Painel.html" class="nav-link">
-
-                        <i class="ícone fas fa-chart-line"></i>
-
-                        <span class="text">Painel</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="requisicao.html" class="nav-link link-ativo">
-
-                        <i class="fas fa-file-alt icon"></i>
-
-                        <span class="text">Requisição</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="fornecedores.html" class="nav-link">
-
-                        <i class="ícone de aperto de mão fas fa"></i>
-
-                        <span class="text">Fornecedores</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="fiscal.html" class="nav-link">
-
-                        <i class="ícone de recibo fas fa"></i>
-
-                        <span class="text">Fiscal</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="pagamentos.html" class="nav-link">
-
-                        <i class="ícone fas fa-money-bill-wave"></i>
-
-                        <span class="text">Pagamentos</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="contratos.html" class="nav-link">
-
-                        <i class="ícone de assinatura de arquivo fas fa"></i>
-
-                        <span class="text">Contratos</span>
-
-                    </a>
-
-                </li>
-
-                <li>
-
-                    <a href="workflow.html" class="nav-link">
-
-                        <i class="ícone fa-cogs"></i>
-
-                        <span class="text">Fluxo de trabalho</span>
-
-                    </a>
-
-                </li>
-
-            </ul>
-
-        </à parte>
-
-
-
-        <classe principal="conteúdo principal" id="conteúdo principal">
-
-            <cabeçalho classe="cabeçalho-principal">
-
-                <div class="cabeçalho-esquerdo-grupo">
-
-                    <botão class="menu-alternar" id="menu-alternar">
-
-                        <span></span>
-
-                        <span></span>
-
-                        <span></span>
-
-                    </botão>
-
-                    <h2>Requisição</h2>
-
-                </div>
-
-                <div class="cabeçalho-direito-grupo">
-
-                    <button id="toggle-requisition-form" class="add-button">
-
-                        <i class="fas fa-plus"></i> Requisição
-
-                    </botão>
-
-                    <button id="logout-button" class="logout-btn">Sair</button>
-
-                </div>
-
-            </cabeçalho>
-
-           
-
-            <section class="nova-seção-de-requisicao" id="nova-seção-de-requisicao" style="display: none;">
-
-                <h3>Adicionar Nova Requisição</h3>
-
-                <form id="requisicao-form" class="form-grid">
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-tipo">Tipo:</label>
-
-                        <input type="text" id="requisicao-tipo" name="tipo" placeholder="Ex: Reparo" obrigatório>
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-data">Dados:</label>
-
-                        <input type="date" id="requisicao-data" name="data" obrigatório>
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-descricao">Requisição:</label>
-
-                        <input type="text" id="requisicao-descricao" name="requisicao" placeholder="Ex: Manutenção Elétrica">
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-fornecedor">Fornecedor:</label>
-
-                        <input type="text" id="requisicao-fornecedor" name="fornecedor" placeholder="Nome do Fornecedor">
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-nf">NF:</label>
-
-                        <input type="text" id="requisicao-nf" name="nf" placeholder="Número da Nota Fiscal">
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-oc">OC:</label>
-
-                        <input type="text" id="requisicao-oc" name="oc" placeholder="Número da OC">
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-filial">Filial:</label>
-
-                        <select id="requisicao-filial" name="filial" obrigatório>
-
-                            <option value="">Selecione a Filial</option>
-
-                            </selecionar>
-
-                    </div>
-
-                    <div class="input-group largura total">
-
-                        <label for="requisicao-observacao">Observação:</label>
-
-                        <textarea id="requisicao-observacao" name="observacao" placeholder="Detalhes da requisição"></textarea>
-
-                    </div>
-
-                    <div class="grupo de entrada">
-
-                        <label for="requisicao-status">Status:</label>
-
-                        <input type="text" id="requisicao-status" name="status" value="pendente" somente leitura>
-
-                    </div>
-
-                    <div class="submit-group">
-
-                        <button type="submit" id="add-requisicao-submit-btn" class="add-button">
-
-                            <i class="fas fa-save"></i> Salvar Requisição
-
-                        </botão>
-
-                    </div>
-
-                </form>
-
-            </seção>
-
-
-
-            <seção class="tabela-seção">
-
-                <h3>Requisições Pendentes</h3>
-
-                <table id="tabela-de-requisição">
-
-                    <cabeça>
-
-                        <tr>
-
-                            <th class="col-edit">Editar</th>
-
-                            <th class="col-tipo">Tipo</th>
-
-                            <th class="col-data">Dados</th>
-
-                            <th class="col-requisicao">Requisição</th>
-
-                            <th class="col-fornecedor">Fornecedor</th>
-
-                            <th class="col-nf">NF</th>
-
-                            <th class="col-oc">OC</th>
-
-                            <th class="col-observacao">Observação</th>
-
-                            <th class="col-status">Estado</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="corpo-da-tabela-de-requisição">
-
-                       
-
-                    </tbody>
-
-                </tabela>
-
-            </seção>
-
-        </principal>
-
-    </div>
-
-    <div id="container-de-notificação" class="container-de-notificação"></div>
-
-    <script src="script.js"></script>
-
-</corpo>
-
-
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <img src="assets/brinks-logo-white.png" alt="Logo da Brinks">
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="Dashboard.html" class="nav-link">
+                        <i class="fas fa-chart-line icon"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="requisicao.html" class="nav-link active-link">
+                        <i class="fas fa-file-alt icon"></i>
+                        <span class="text">Requisição</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="fornecedores.html" class="nav-link">
+                        <i class="fas fa-handshake icon"></i>
+                        <span class="text">Fornecedores</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="fiscal.html" class="nav-link">
+                        <i class="fas fa-receipt icon"></i>
+                        <span class="text">Fiscal</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pagamentos.html" class="nav-link">
+                        <i class="fas fa-money-bill-wave icon"></i>
+                        <span class="text">Pagamentos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="contratos.html" class="nav-link">
+                        <i class="fas fa-file-signature icon"></i>
+                        <span class="text">Contratos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="workflow.html" class="nav-link">
+                        <i class="fas fa-cogs icon"></i>
+                        <span class="text">Workflow</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <header class="main-header">
+                <div class="header-left-group">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h2>Requisição</h2>
+                </div>
+                <div class="header-right-group">
+                    <button id="toggle-requisition-form" class="add-button">
+                        <i class="fas fa-plus"></i> Requisição
+                    </button>
+                    <button id="logout-button" class="logout-btn">Sair</button>
+                </div>
+            </header>
+            
+            <section class="new-requisicao-section" id="new-requisicao-section" style="display: none;">
+                <h3>Adicionar Nova Requisição</h3>
+                <form id="requisicao-form" class="form-grid">
+                    <div class="input-group">
+                        <label for="requisicao-tipo">Tipo:</label>
+                        <input type="text" id="requisicao-tipo" name="tipo" placeholder="Ex: Reparo" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-data">Data:</label>
+                        <input type="date" id="requisicao-data" name="data" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-descricao">Requisição:</label>
+                        <input type="text" id="requisicao-descricao" name="requisicao" placeholder="Ex: Manutenção Elétrica">
+                    </div>
+                    <div class="input-group autocomplete-container">
+                        <label for="requisicao-fornecedor">Fornecedor:</label>
+                        <input type="text" id="requisicao-fornecedor" name="fornecedor" placeholder="Nome do Fornecedor">
+                        <ul id="requisicao-fornecedor-suggestions" class="suggestions-list"></ul>
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-nf">NF:</label>
+                        <input type="text" id="requisicao-nf" name="nf" placeholder="Número da Nota Fiscal">
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-oc">OC:</label>
+                        <input type="text" id="requisicao-oc" name="oc" placeholder="Número da OC">
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-filial">Filial:</label>
+                        <select id="requisicao-filial" name="filial" required>
+                            <option value="">Selecione a Filial</option>
+                            </select>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="requisicao-observacao">Observação:</label>
+                        <textarea id="requisicao-observacao" name="observacao" placeholder="Detalhes da requisição"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-status">Status:</label>
+                        <input type="text" id="requisicao-status" name="status" value="pendente" readonly>
+                    </div>
+                    <div class="submit-group">
+                        <button type="submit" id="add-requisicao-submit-btn" class="add-button">
+                            <i class="fas fa-save"></i> Salvar Requisição
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="table-section">
+                <h3>Requisições Pendentes</h3>
+                <table id="requisition-table">
+                    <thead>
+                        <tr>
+                            <th class="col-editar">Editar</th>
+                            <th class="col-tipo">Tipo</th>
+                            <th class="col-data">Data</th>
+                            <th class="col-requisicao">Requisição</th>
+                            <th class="col-fornecedor">Fornecedor</th>
+                            <th class="col-nf">NF</th>
+                            <th class="col-oc">OC</th>
+                            <th class="col-observacao">Observação</th>
+                            <th class="col-status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requisition-table-body">
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <div id="notification-container" class="notification-container"></div>
+    <script src="script.js"></script>
+</body>
 </html>

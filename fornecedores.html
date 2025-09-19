@@ -1,213 +1,128 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
-
-<cabeça>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="largura=largura-do-dispositivo, escala-inicial=1.0">
-
-    <title>Fornecedores - Sistema de Compras</title>
-
-    <link rel="folha de estilo" href="styles.css">
-
-    <link rel="folha de estilo" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fornecedores - Sistema de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-
-<corpo>
-
-    <div class="container">
-
-        <aside class="barra lateral" id="barra lateral">
-
-           <div class="logo-container">
-
-                <img src="assets/brinks-logo-white.png" alt="Logo da Brinks">
-
-            </div>
-
-            <ul class="nav-links">
-
-                <li><a href="Dashboard.html" class="nav-link"><i class="fas fa-chart-line icon"></i> <span class="text">Painel</span></a></li>
-
-                <li><a href="requisicao.html" class="nav-link"><i class="fas fa-file-alt icon"></i> <span class="text">Requisição</span></a></li>
-
-                <li><a href="fornecedores.html" class="nav-link active-link"><i class="fas fa-handshake icon"></i> <span class="text">Fornecedores</span></a></li>
-
-                <li><a href="fiscal.html" class="nav-link"><i class="fas fa-receipt icon"></i> <span class="text">Fiscal</span></a></li>
-
-                <li><a href="pagamentos.html" class="nav-link"><i class="fas fa-money-bill-wave icon"></i> <span class="text">Pagamentos</span></a></li>
-
-                <li><a href="contratos.html" class="nav-link"><i class="fas fa-file-signature icon"></i> <span class="text">Contratos</span></a></li>
-
-                <li><a href="workflow.html" class="nav-link"><i class="fas fa-cogs icon"></i> <span class="text">Fluxo de trabalho</span></a></li>
-
-            </ul>
-
-        </à parte>
-
-
-
-        <classe principal="conteúdo principal" id="conteúdo principal">
-
-            <cabeçalho classe="cabeçalho-principal">
-
-                <div class="cabeçalho-esquerdo-grupo">
-
-                    <botão class="menu-alternar" id="menu-alternar">
-
-                        <span></span>
-
-                        <span></span>
-
-                        <span></span>
-
-                    </botão>
-
-                    <h2>Fornecedores</h2>
-
-                </div>
-
-                <div class="cabeçalho-direito-grupo">
-
-                    <button class="toggle-button" id="toggle-fornecedor-form"><i class="fas fa-plus"></i> Fornecedor</button>
-
-                    <button id="logout-button" class="logout-btn">Sair</button>
-
-                </div>
-
-            </cabeçalho>
-
-
-
-                        <section id="new-fornecedor-section" style="display: none;" class="new-requisition-section">
-
-                <h3>Adicionar Novo Fornecedor</h3>
-
-                <form id="fornecedor-form" class="fornecedor-form-grid">
-
-                    <select id="fornecedor-filial" name="filial" class="input-field" obrigatório>
-
-                        <option value="">Selecione a Filial</option>
-
-                        <option value="todas">Todas</option>
-
-                        <opção valor="SAO">SAO</opção>
-
-                        <valor da opção="LDB">LDB</opção>
-
-                        <option value="SJK">SJK</option>
-
-                        <opção valor="IGU">IGU</opção>
-
-                        <valor da opção="CCX">CCX</opção>
-
-                        <opção valor="PTO">PTO</opção>
-
-                    </selecionar>
-
-                    <input type="text" id="fornecedor-nome" name="nome" placeholder="Nome do Fornecedor" class="input-field" required>
-
-                    <input type="text" id="fornecedor-cnpj" name="cnpj" placeholder="CNPJ" class="input-field" obrigatório>
-
-                    <select id="fornecedor-pagamento" name="pagamento" class="input-field" obrigatório>
-
-                        <option value="">Selecione o Pagamento</option>
-
-                        <option value="BOLETO">BOLETO</option>
-
-                        <option value="BR ELETRÔNICO">BR ELETRÔNICO</option>
-
-                        <option value="DÉBITO AUTOMÁTICO">DÉBITO AUTOMÁTICO</option>
-
-                    </selecionar>
-
-                    <input type="text" id="fornecedor-acordo" name="acordo" placeholder="Nº Acordo" class="input-field" required>
-
-                    <input type="date" id="fornecedor-inicio-vigencia" name="inicioVigencia" class="input-field">
-
-                    <input type="data" id="fornecedor-final-vigencia" name="finalVigencia" class="input-field">
-
-                    <select id="fornecedor-acao" name="acao" class="input-field" required>
-
-                        <option value="">Selecione a Ação</option>
-
-                        <option value="ORACLE - XML ​​- E-MAIL">ORACLE - XML ​​- E-MAIL</option>
-
-                        <option value="ORACLE - PAGAMENTOS - EMAIL">ORACLE - PAGAMENTOS - EMAIL</option>
-
-                        <option value="PAGAMENTOS - E-MAIL">PAGAMENTOS - E-MAIL</option>
-
-                    </selecionar>
-
-                    <div class="largura total">
-
-                        <button type="submit" id="add-fornecedor-button" class="add-button">
-
-                            <i class="fas fa-save"></i> Adicionar Fornecedor
-
-                        </botão>
-
-                    </div>
-
-                </form>
-
-            </seção>
-
-
-
-            <seção class="content-table">
-
-                <table id="fornecedores-table" class="fornecedores-table">
-
-                    <cabeça>
-
-                        <tr>
-
-                            <th class="acoes-header col-fornecedor-editar">Editar</th>
-
-                            <th class="acoes-header col-fornecedor-filial">Filial</th>
-
-                            <th class="acoes-header col-fornecedor-nome">Fornecedor</th>
-
-                            <th class="acoes-header col-fornecedor-cnpj">CNPJ</th>
-
-                            <th class="acoes-header col-fornecedor-pagamento">Pagamento</th>
-
-                            <th class="acoes-header col-fornecedor-acordo">Nº Acordo</th>
-
-                            <th class="acoes-header col-fornecedor-inicio-vigencia">Início Vigência</th>
-
-                            <th class="acoes-header col-fornecedor-final-vigencia">Final Vigência</th>
-
-                            <th class="acoes-header col-fornecedor-acao">Ação</th>
-
-                            <th class="acoes-header col-fornecedor-excluir">Excluir</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="fornecedores-table-body">
-
-                    </tbody>
-
-                </tabela>
-
-            </seção>
-
-        </principal>
-
-    </div>
-
-
-
-    <div id="container-de-notificação" class="container-de-notificação"></div>
-
-    <script src="script.js"></script>
-
-</corpo>
-
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <img src="assets/brinks-logo-white.png" alt="Logo da Brinks">
+            </div>
+            <ul class="nav-links">
+                <li><a href="Dashboard.html" class="nav-link"><i class="fas fa-chart-line icon"></i> <span class="text">Dashboard</span></a></li>
+                <li><a href="requisicao.html" class="nav-link"><i class="fas fa-file-alt icon"></i> <span class="text">Requisição</span></a></li>
+                <li><a href="fornecedores.html" class="nav-link active-link"><i class="fas fa-handshake icon"></i> <span class="text">Fornecedores</span></a></li>
+                <li><a href="fiscal.html" class="nav-link"><i class="fas fa-receipt icon"></i> <span class="text">Fiscal</span></a></li>
+                <li><a href="pagamentos.html" class="nav-link"><i class="fas fa-money-bill-wave icon"></i> <span class="text">Pagamentos</span></a></li>
+                <li><a href="contratos.html" class="nav-link"><i class="fas fa-file-signature icon"></i> <span class="text">Contratos</span></a></li>
+                <li><a href="workflow.html" class="nav-link"><i class="fas fa-cogs icon"></i> <span class="text">Workflow</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <header class="main-header">
+                <div class="header-left-group">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h2>Fornecedores</h2>
+                </div>
+                <div class="header-right-group">
+                    <button class="toggle-button" id="toggle-fornecedor-form"><i class="fas fa-plus"></i> Fornecedor</button>
+                    <button id="logout-button" class="logout-btn">Sair</button>
+                </div>
+            </header>
+
+            <section id="new-fornecedor-section" style="display: none;" class="new-requisition-section">
+                <h3>Adicionar Novo Fornecedor</h3>
+                <form id="fornecedor-form" class="fornecedor-form-grid">
+                    <div class="form-group">
+                        <label for="fornecedor-filial">Filial:</label>
+                        <select id="fornecedor-filial" name="filial" class="input-field" required>
+                            <option value="">Selecione a Filial</option>
+                            <option value="todas">Todas</option>
+                            <option value="SAO">SAO</option>
+                            <option value="LDB">LDB</option>
+                            <option value="SJK">SJK</option>
+                            <option value="IGU">IGU</option>
+                            <option value="CCX">CCX</option>
+                            <option value="PTO">PTO</option>
+                        </select>
+                    </div>
+                    <div class="form-group autocomplete-container">
+                        <label for="fornecedor-nome">Nome do Fornecedor:</label>
+                        <input type="text" id="fornecedor-nome" name="nome" placeholder="Ex: BRINKS LTDA" required>
+                        <ul id="fornecedor-nome-suggestions" class="suggestions-list"></ul>
+                    </div>
+                    <div class="form-group autocomplete-container">
+                        <label for="fornecedor-cnpj">CNPJ:</label>
+                        <input type="text" id="fornecedor-cnpj" name="cnpj" placeholder="Apenas números">
+                        <ul id="fornecedor-cnpj-suggestions" class="suggestions-list"></ul>
+                    </div>
+                    <div class="form-group">
+                        <label for="fornecedor-pagamento">Pagamento:</label>
+                        <select id="fornecedor-pagamento" name="pagamento" class="input-field" required>
+                            <option value="">Selecione o Pagamento</option>
+                            <option value="BOLETO">BOLETO</option>
+                            <option value="BR ELETRÔNICO">BR ELETRÔNICO</option>
+                            <option value="DÉBITO AUTOMÁTICO">DÉBITO AUTOMÁTICO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fornecedor-acordo">Acordo:</label>
+                        <input type="text" id="fornecedor-acordo" name="acordo" placeholder="Nº Acordo" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="fornecedor-inicio-vigencia">Início da Vigência:</label>
+                        <input type="date" id="fornecedor-inicio-vigencia" name="inicioVigencia" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="fornecedor-final-vigencia">Final da Vigência:</label>
+                        <input type="date" id="fornecedor-final-vigencia" name="finalVigencia" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="fornecedor-acao">Ação:</label>
+                        <textarea id="fornecedor-acao" name="acao" placeholder="Detalhes da ação"></textarea>
+                    </div>
+                    <div class="submit-group">
+                        <button type="submit" id="add-fornecedor-submit-btn" class="add-button">
+                            <i class="fas fa-save"></i> Adicionar Fornecedor
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="content-table">
+                <table id="fornecedores-table" class="fornecedores-table">
+                    <thead>
+                        <tr>
+                            <th class="acoes-header col-fornecedor-editar">Editar</th>
+                            <th class="acoes-header col-fornecedor-filial">Filial</th>
+                            <th class="acoes-header col-fornecedor-nome">Fornecedor</th>
+                            <th class="acoes-header col-fornecedor-cnpj">CNPJ</th>
+                            <th class="acoes-header col-fornecedor-pagamento">Pagamento</th>
+                            <th class="acoes-header col-fornecedor-acordo">Nº Acordo</th>
+                            <th class="acoes-header col-fornecedor-inicio-vigencia">Início Vigência</th>
+                            <th class="acoes-header col-fornecedor-final-vigencia">Final Vigência</th>
+                            <th class="acoes-header col-fornecedor-acao">Ação</th>
+                            <th class="acoes-header col-fornecedor-excluir">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fornecedores-table-body">
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+    <script src="script.js"></script>
+</body>
 </html>

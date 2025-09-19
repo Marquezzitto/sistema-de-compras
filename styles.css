@@ -1,295 +1,295 @@
 /* Estilos Gerais */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f6f8;
-    color: #333;
-    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+    overflow-x: hidden;
 }
 
 .container {
-    display: flex;
-    min-height: 100vh;
+    display: flex;
+    min-height: 100vh;
 }
 
 /* Sidebar */
 .sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 0px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    position: fixed;
-    left: -250px; /* Inicia escondida */
-    top: 0;
-    height: 100%;
-    transition: left 0.3s ease;
-    z-index: 200;
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 0px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+    left: -250px; /* Inicia escondida */
+    top: 0;
+    height: 100%;
+    transition: left 0.3s ease;
+    z-index: 200;
 }
 
 .sidebar.active {
-    left: 0; /* Exibe a sidebar */
+    left: 0; /* Exibe a sidebar */
 }
 
 .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 50px;
+    list-style: none;
+    padding: 0;
+    margin-top: 50px;
 }
 
 .sidebar li {
-    margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 .logo-container {
-    padding: 20px; /* Adiciona espaçamento interno ao redor da logo */
-    text-align: center; /* Centraliza a imagem horizontalmente */
+    padding: 20px; /* Adiciona espaçamento interno ao redor da logo */
+    text-align: center; /* Centraliza a imagem horizontalmente */
 }
 
 .logo-container img {
-    max-width: 100%; /* Garante que a imagem não ultrapasse a largura do contêiner */
-    height: auto; /* Mantém a proporção da imagem */
+    max-width: 100%; /* Garante que a imagem não ultrapasse a largura do contêiner */
+    height: auto; /* Mantém a proporção da imagem */
 }
 .sidebar a {
-    color: white;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
 
 .sidebar a:hover {
-    background-color: #34495e;
+    background-color: #34495e;
 }
 
 /* Garante que os ícones do menu fiquem brancos */
 .sidebar .icon {
-    font-size: 24px;
-    margin-right: 15px;
-    color: white;
+    font-size: 24px;
+    margin-right: 15px;
+    color: white;
 }
 
 /* Garante que a aba ativa fique negrito */
 .sidebar a.active-link {
-    font-weight: bold;
+    font-weight: bold;
 }
 
 /* Garante que o texto dentro da aba ativa fique em negrito */
 .sidebar a.active-link .text {
-    font-weight: bold;
+    font-weight: bold;
 }
 
 /* Conteúdo Principal */
 .main-content {
-    flex-grow: 1;
-    padding: 20px;
-    margin-left: 0; /* Começa sem margem */
-    transition: margin-left 0.3s ease;
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 0; /* Começa sem margem */
+    transition: margin-left 0.3s ease;
 }
 
 /* Esta é a regra chave: quando a sidebar está ativa, empurra o main-content */
 .sidebar.active ~ .main-content {
-    margin-left: 250px;
+    margin-left: 250px;
 }
 
 .main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 0 10px; /* Adicionado padding para melhor alinhamento */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px; /* Adicionado padding para melhor alinhamento */
 }
 
 .main-header h2 {
-    margin: 0;
-    font-size: 2em;
-    color: #2c3e50;
+    margin: 0;
+    font-size: 2em;
+    color: #2c3e50;
 }
 
 .header-left-group {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Reduzido o espaçamento para melhor visual */
-    padding-left: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Reduzido o espaçamento para melhor visual */
+    padding-left: 0;
 }
 
 .header-right-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* Cards de Status */
 .status-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
 .card {
-    position: relative;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #3498db;
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3498db;
 }
 
 .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 6px;
-    background-color: #3498db;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 6px;
+    background-color: #3498db;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 /* Formulários e Botões */
 .new-requisition-section,
 .new-fornecedor-section,
 .new-contrato-section {
-    background-color: #eaf1f7;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #dcdcdc;
+    background-color: #eaf1f7;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dcdcdc;
 }
 
 .new-requisition-container,
 .new-fornecedor-container,
 .new-contrato-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
 }
 
 /* Esta é a regra principal que irá garantir que os campos fiquem lado a lado */
 .new-requisition-group,
 .new-fornecedor-group,
 .new-contrato-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    width: 100%;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
 }
 /* 1. Estiliza o texto de dica (placeholder) para campos de texto */
 .input-field::placeholder {
-    color: #95a5a6; /* Cinza claro */
+    color: #95a5a6; /* Cinza claro */
 }
 
 /* 2. Estiliza o texto dos campos de seleção e de data ANTES da seleção */
 .input-field {
-    color: #95a5a6; /* Cor padrão cinza claro para o texto */
+    color: #95a5a6; /* Cor padrão cinza claro para o texto */
 }
 
 /* 3. Estiliza o texto dos campos de seleção e de data DEPOIS da seleção */
 /* Para campos com um valor válido (selecionado/preenchido), a cor do texto muda para preto */
 .input-field:valid {
-    color: #333; /* Cor preta */
+    color: #333; /* Cor preta */
 }
 
 /* 4. Certifica-se de que os campos de seleção sem um valor inicial também tenham a cor cinza */
 .input-field.input-select:not([value=""]) {
-    color: #95a5a6;
+    color: #95a5a6;
 }
 
 /* Estilo base para todos os campos de entrada */
 .input-field,
 .input-select,
 .input-date {
-    flex-basis: 0;
-    flex-grow: 1;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    min-width: 120px;
-    box-sizing: border-box;
-    background-color: #fff;
+    flex-basis: 0;
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    min-width: 120px;
+    box-sizing: border-box;
+    background-color: #fff;
 }
 
 /* Estilo específico para o wrapper do autocomplete, remove a borda do wrapper */
 .autocomplete-wrapper {
-    flex-basis: 0;
-    flex-grow: 1;
-    position: relative;
-    min-width: 120px;
-    box-sizing: border-box;
-    border: none;
-    padding: 0;
+    flex-basis: 0;
+    flex-grow: 1;
+    position: relative;
+    min-width: 120px;
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
 }
 
 /* Aplica o estilo de borda e padding ao input DENTRO do autocomplete-wrapper */
 .autocomplete-wrapper .input-field {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-sizing: border-box;
 }
 
 .add-button {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    display: block;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Espaçamento entre o ícone e o texto no botão */
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    display: block;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre o ícone e o texto no botão */
 }
 
 /* Estilo do ícone dentro do botão `add-button` */
 .add-button .fas {
-    font-size: 1.2em;
-    line-height: 1;
+    font-size: 1.2em;
+    line-height: 1;
 }
 
 /* Tabelas */
 .content-table {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 table th {
-    background-color: #2c3e50; /* Cor de fundo para o cabeçalho da tabela */
-    color: white; /* Cor da fonte branca para o cabeçalho */
-    padding: 15px;
-    font-weight: bold;
-    text-align: center;
-    font-size: 0.85em;
-    border: 1px solid #ddd;
+    background-color: #2c3e50; /* Cor de fundo para o cabeçalho da tabela */
+    color: white; /* Cor da fonte branca para o cabeçalho */
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
 }
 
 table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-    font-size: 0.80em;
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.80em;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -300,188 +300,188 @@ table td {
 /* Defina a largura de cada coluna em porcentagem. A soma deve ser 100%. */
 #fornecedores-table th,
 #fornecedores-table td {
-    font-size: 0.8em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
-    text-align: center;
+    font-size: 0.8em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
+    text-align: center;
 }
 
 /* Ajuste das novas larguras de coluna */
 #fornecedores-table .col-fornecedor-editar {
-    width: 1%;
+    width: 1%;
 }
 
 #fornecedores-table .col-fornecedor-filial {
-    width: 1%;
+    width: 1%;
 }
 
 #fornecedores-table .col-fornecedor-nome {
-    width: 30%;
+    width: 30%;
 }
 
 #fornecedores-table .col-fornecedor-cnpj {
-    width: 13%;
+    width: 13%;
 }
 
 #fornecedores-table .col-fornecedor-pagamento {
-    width: 10%;
+    width: 10%;
 }
 
 #fornecedores-table .col-fornecedor-acordo {
-    width: 8%;
+    width: 8%;
 }
 
 #fornecedores-table .col-fornecedor-inicio-vigencia {
-    width: 8%;
+    width: 8%;
 }
 
 #fornecedores-table .col-fornecedor-final-vigencia {
-    width: 8%;
+    width: 8%;
 }
 
 #fornecedores-table .col-fornecedor-acao {
-    width: 20%;
+    width: 20%;
 }
 #fornecedores-table .col-fornecedor-excluir {
-    width: 2%;
+    width: 2%;
 }
 
 /* AJUSTES PARA A TABELA DE REQUISIÇÃO (requisicao.html) */
 #requisition-table th,
 #requisition-table td {
-    font-size: 0.8em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
+    font-size: 0.8em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
 }
 
 #requisition-table .col-editar {
-    width: 3%;
+    width: 3%;
 }
 
 #requisition-table .col-tipo {
-    width: 8%;
+    width: 8%;
 }
 
 #requisition-table .col-data {
-    width: 10%;
+    width: 10%;
 }
 
 #requisition-table .col-requisicao {
-    width: 18%;
+    width: 18%;
 }
 
 #requisition-table .col-fornecedor {
-    width: 18%;
+    width: 18%;
 }
 
 #requisition-table .col-nf {
-    width: 8%;
+    width: 8%;
 }
 
 #requisition-table .col-oc {
-    width: 8%;
+    width: 8%;
 }
 
 #requisition-table .col-observacao {
-    width: 15%;
+    width: 15%;
 }
 
 #requisition-table .col-status {
-    width: 4%;
+    width: 4%;
 }
 
 /* AJUSTES PARA A TABELA FISCAL (fiscal.html) */
 #xml-table th, #portal-table th,
 #xml-table td, #portal-table td {
-    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
+    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
 }
 
 #xml-table .col-tipo, #portal-table .col-tipo {
-    width: 10%;
+    width: 10%;
 }
 
 #xml-table .col-data, #portal-table .col-data {
-    width: 10%;
+    width: 10%;
 }
 
 #xml-table .col-requisicao, #portal-table .col-requisicao {
-    width: 15%;
+    width: 15%;
 }
 
 #xml-table .col-fornecedor, #portal-table .col-fornecedor {
-    width: 25%;
+    width: 25%;
 }
 
 #xml-table .col-nf, #portal-table .col-nf {
-    width: 10%;
+    width: 10%;
 }
 
 #xml-table .col-oc, #portal-table .col-oc {
-    width: 10%;
+    width: 10%;
 }
 
 /* AJUSTES PARA A TABELA DE PAGAMENTOS (pagamentos.html) */
 #pagamentos-table th,
 #pagamentos-table td {
-    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
+    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
 }
 
 #pagamentos-table .col-tipo {
-    width: 10%;
+    width: 10%;
 }
 
 #pagamentos-table .col-data {
-    width: 10%;
+    width: 10%;
 }
 
 #pagamentos-table .col-requisicao {
-    width: 15%;
+    width: 15%;
 }
 
 #pagamentos-table .col-fornecedor {
-    width: 20%;
+    width: 20%;
 }
 
 #pagamentos-table .col-filial {
-    width: 10%;
+    width: 10%;
 }
 
 #pagamentos-table .col-status-pagamento {
-    width: 5%;
+    width: 5%;
 }
 
 #pagamentos-table .col-acoes-pagamento {
-    width: 10%;
+    width: 10%;
 }
 
 /* AJUSTES PARA A TABELA DE CONTRATOS (contratos.html) */
 #contratos-table th,
 #contratos-table td {
-    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
+    font-size: 0.85em; /* Exemplo de como ajustar o tamanho da fonte da tabela inteira */
 }
 
 #contratos-table .col-contrato-numero {
-    width: 15%;
+    width: 15%;
 }
 
 #contratos-table .col-contrato-fornecedor {
-    width: 25%;
+    width: 25%;
 }
 
 #contratos-table .col-contrato-inicio {
-    width: 15%;
+    width: 15%;
 }
 
 #contratos-table .col-contrato-fim {
-    width: 15%;
+    width: 15%;
 }
 
 #contratos-table .col-contrato-valor {
-    width: 15%;
+    width: 15%;
 }
 
 #contratos-table .col-contrato-status {
-    width: 10%;
+    width: 10%;
 }
 
 #contratos-table .col-contrato-acoes {
-    width: 5%;
+    width: 5%;
 }
 
 
@@ -491,556 +491,773 @@ table td {
 
 
 .status-icon {
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 .status-icon.approve-btn:hover {
-    color: #2ecc71;
-    /* transform: scale(1.1); REMOVIDO */
+    color: #2ecc71;
+    /* transform: scale(1.1); REMOVIDO */
 }
 
 .status-icon.reject-btn:hover {
-    color: #e74c3c;
-    /* transform: scale(1.1); REMOVIDO */
+    color: #e74c3c;
+    /* transform: scale(1.1); REMOVIDO */
 }
 
 .edit-btn,
 .delete-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2em;
-    padding: 0;
-    margin: 0;
-    transition: transform 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 0;
+    margin: 0;
+    transition: transform 0.2s ease;
 }
 
 .edit-btn:hover,
 .delete-btn:hover 
-    /* transform: scale(1.1); REMOVIDO */
+    /* transform: scale(1.1); REMOVIDO */
 
 
 
 .realizado-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .realizado-btn:hover {
-    background-color: #2980b9;
+    background-color: #2980b9;
 }
 
 /* Notificações */
 .notification-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
 }
 
 .notification {
-    background-color: #333;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    margin-bottom: 10px;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .notification.show {
-    opacity: 1;
-    transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .notification.success {
-    background-color: #27ae60;
+    background-color: #27ae60;
 }
 
 .notification.error {
-    background-color: #e74c3c;
+    background-color: #e74c3c;
 }
 
 /* Autocomplete */
 .autocomplete-list {
-    position: absolute;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    top: 100%;
-    left: 0;
-    right: 0;
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
 }
 
 .autocomplete-list div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid #d4d4d4;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
 }
 
 .autocomplete-list div:hover {
-    background-color: #e9e9e9;
+    background-color: #e9e9e9;
 }
 
 /* Estilo para o Botão Logout */
 .logout-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 .logout-btn:hover {
-    background-color: #c0392b;
+    background-color: #c0392b;
 }
 
 /* Estilo do menu hambúrguer */
 .menu-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
 }
 
 .menu-toggle span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background-color: #333;
-    margin: 5px 0;
-    transition: all 0.3s;
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px 0;
+    transition: all 0.3s;
 }
 
 .menu-toggle.open span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
+    transform: translateY(8px) rotate(45deg);
 }
 
 .menu-toggle.open span:nth-child(2) {
-    opacity: 0;
+    opacity: 0;
 }
 
 .menu-toggle.open span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 /* Posição do botão de logout na sidebar */
 .logout-section {
-    display: none;
+    display: none;
 }
 
 /* Estilo para o ícone de Filial (prédio) */
 .filial-icon {
-    color: #007bff;
+    color: #007bff;
 }
 
 /* Estilo para o novo botão de filial */
 .filial-btn {
-    background-color: white;
-    color: #2c3e50;
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.3s;
+    background-color: white;
+    color: #2c3e50;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
 }
 
 .filial-btn:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 /* 1. Estilize o contêiner do link (<a>) */
 .sidebar .nav-links .nav-link {
-    display: flex; /* Transforma o link em um contêiner flexível */
-    align-items: center; /* Alinha o ícone e o texto verticalmente no centro */
-    padding: 12px 0; /* Remova o padding horizontal aqui, ele será controlado pelos sub-elementos */
-    color: white;
-    padding-left: 50px;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    width: 100%; /* Garante que o link ocupe toda a largura do <li> */
-    box-sizing: border-box; /* Inclui padding na largura total */
+    display: flex; /* Transforma o link em um contêiner flexível */
+    align-items: center; /* Alinha o ícone e o texto verticalmente no centro */
+    padding: 12px 0; /* Remova o padding horizontal aqui, ele será controlado pelos sub-elementos */
+    color: white;
+    padding-left: 50px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%; /* Garante que o link ocupe toda a largura do <li> */
+    box-sizing: border-box; /* Inclui padding na largura total */
 }
 
 /* 2. Estilize o contêiner do ícone para alinhá-los */
 .sidebar .nav-links .nav-link .nav-icon {
-    width: 60px; /* **ESSENCIAL:** Largura fixa para o contêiner do ícone. Ajuste conforme necessário. */
-    text-align: center; /* Centraliza o ícone dentro de sua largura fixa */
-    flex-shrink: 0; /* Impede que ele encolha */
-    /* Você pode adicionar padding-left aqui se quiser que os ícones fiquem um pouco mais à direita do limite da sidebar */
+    width: 60px; /* **ESSENCIAL:** Largura fixa para o contêiner do ícone. Ajuste conforme necessário. */
+    text-align: center; /* Centraliza o ícone dentro de sua largura fixa */
+    flex-shrink: 0; /* Impede que ele encolha */
+    /* Você pode adicionar padding-left aqui se quiser que os ícones fiquem um pouco mais à direita do limite da sidebar */
 }
 
 /* 3. Estilize o ícone em si (o <i>) */
 .sidebar .nav-links .nav-link .nav-icon .fas {
-    font-size: 1.2rem;
-    /* Remover margin-right daqui, pois o espaçamento será entre nav-icon e nav-text */
+    font-size: 1.2rem;
+    /* Remover margin-right daqui, pois o espaçamento será entre nav-icon e nav-text */
 }
 
 /* 4. Estilize o texto do menu para centralizá-lo */
 .sidebar .nav-links .nav-link .nav-text {
-    flex-grow: 1; /* Permite que o texto ocupe o espaço restante */
-    text-align: center; /* **ESSENCIAL:** Centraliza o texto dentro do espaço que ele ocupa */
-    padding-right: 20px; /* Adiciona padding à direita para equilibrar o visual com o ícone à esquerda */
-    /* Ajuste este padding para controlar a centralização visual do texto em relação à largura total do menu */
+    flex-grow: 1; /* Permite que o texto ocupe o espaço restante */
+    text-align: center; /* **ESSENCIAL:** Centraliza o texto dentro do espaço que ele ocupa */
+    padding-right: 20px; /* Adiciona padding à direita para equilibrar o visual com o ícone à esquerda */
+    /* Ajuste este padding para controlar a centralização visual do texto em relação à largura total do menu */
 }
 
 /* Estilo para o item da lista (<li>) para dar o espaçamento vertical entre os itens */
 .sidebar .nav-links li {
-    margin-bottom: 5px; /* Espaçamento entre os itens do menu */
+    margin-bottom: 5px; /* Espaçamento entre os itens do menu */
 }
 
 /* Estilo para o estado ativo e hover */
 .sidebar .nav-links .nav-link:hover,
 .sidebar .nav-links .nav-link.active-link {
-    background-color: #34495e;
-    color: #ecf0f1;
+    background-color: #34495e;
+    color: #ecf0f1;
 }
 
 /* Para quando a sidebar estiver recolhida (se você tiver essa funcionalidade) */
 .sidebar:not(.active) .nav-links .nav-link .nav-icon {
-    width: 100%; /* O ícone ocupa toda a largura do link */
-    padding: 0;
-    margin: 0;
+    width: 100%; /* O ícone ocupa toda a largura do link */
+    padding: 0;
+    margin: 0;
 }
 
 .sidebar:not(.active) .nav-links .nav-link .nav-text {
-    display: none; /* Oculta o texto */
+    display: none; /* Oculta o texto */
 }
 
 .sidebar:not(.active) .nav-links .nav-link {
-    justify-content: center; /* Centraliza o ícone quando o texto está oculto */
-    padding: 12px 0;
+    justify-content: center; /* Centraliza o ícone quando o texto está oculto */
+    padding: 12px 0;
 }
 /* Estilo para o Modal (janela pop-up) */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 300px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative;
-    animation-name: animatetop;
-    animation-duration: 0.4s;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
 }
 
 .close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .close-btn:hover,
 .close-btn:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .filial-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-    max-height: 150px;
-    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    max-height: 150px;
+    overflow-y: auto;
 }
 
 .filial-list li {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .filial-list li:last-child {
-    border-bottom: none;
+    border-bottom: none;
 }
 
 .filial-list li:hover {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 /* Animação de entrada do modal */
 @keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 15%; opacity: 1}
+    from {top: -300px; opacity: 0}
+    to {top: 15%; opacity: 1}
 }
 
 /* Novos estilos para o botão "+ Fornecedor" e formulário */
 #toggle-fornecedor-form {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 #toggle-fornecedor-form:hover {
-    background-color: #2980b9;
+    background-color: #2980b9;
 }
 
 /* Ajuste do layout do formulário para o estilo flexbox */
 .fornecedor-form-grid {
-    display: flex; /* Mudança de grid para flex */
-    gap: 10px; /* Espaçamento entre os campos */
-    flex-wrap: wrap; /* Permite que os campos quebrem para a próxima linha em telas menores */
-    align-items: flex-start;
-    width: 100%;
+    display: flex; /* Mudança de grid para flex */
+    gap: 10px; /* Espaçamento entre os campos */
+    flex-wrap: wrap; /* Permite que os campos quebrem para a próxima linha em telas menores */
+    align-items: flex-start;
+    width: 100%;
 }
 
 .fornecedor-form-grid .full-width {
-    width: 100%; /* Garante que o botão ocupe toda a linha */
-    text-align: center;
+    width: 100%; /* Garante que o botão ocupe toda a linha */
+    text-align: center;
 }
 
 #add-fornecedor-button {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: auto;
-    margin: 0 auto;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: auto;
+    margin: 0 auto;
 }
 
 #add-fornecedor-button:hover {
-    background-color: #27ae60;
-    transform: translateY(-2px);
+    background-color: #27ae60;
+    transform: translateY(-2px);
 }
 /* Estilo para as seções de formulário */
 .new-fornecedor-section, .new-requisicao-section, .new-contrato-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
 /* Estilo para formulários com layout mais amplo */
 .wide-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .form-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .form-group label {
-    font-weight: bold;
-    flex-basis: 100%;
+    font-weight: bold;
+    flex-basis: 100%;
 }
 
 .form-group input, .form-group textarea, .form-group select {
-    flex: 1;
-    min-width: 250px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .form-group textarea {
-    min-height: 80px;
+    min-height: 80px;
 }
-/* Estilo para as seções de formulário */
-.new-fornecedor-section, .new-requisicao-section, .new-contrato-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-/* Estilo para formulários com layout de grid */
-.fornecedor-form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+/* Estilos Gerais */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+    overflow-x: hidden;
 }
 
-.fornecedor-form-grid .full-width {
-    grid-column: 1 / -1;
+.container {
+    display: flex;
+    min-height: 100vh;
 }
 
-/* Estilo para os campos de input e select */
-.input-field, .input-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box; /* Garante que padding não altere a largura */
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 0px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+    left: -250px; /* Inicia escondida */
+    top: 0;
+    height: 100%;
+    transition: left 0.3s ease;
+    z-index: 200;
+}
+
+.sidebar.active {
+    left: 0; /* Exibe a sidebar */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 50px;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+.logo-container {
+    padding: 20px; /* Adiciona espaçamento interno ao redor da logo */
+    text-align: center; /* Centraliza a imagem horizontalmente */
+}
+
+.logo-container img {
+    max-width: 100%; /* Garante que a imagem não ultrapasse a largura do contêiner */
+    height: auto; /* Mantém a proporção da imagem */
+}
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+}
+
+/* Garante que os ícones do menu fiquem brancos */
+.sidebar .icon {
+    font-size: 24px;
+    margin-right: 15px;
+    color: white;
+}
+
+/* Garante que a aba ativa fique negrito */
+.sidebar a.active-link {
+    font-weight: bold;
+}
+
+/* Garante que o texto dentro da aba ativa fique em negrito */
+.sidebar a.active-link .text {
+    font-weight: bold;
+}
+
+/* Conteúdo Principal */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 0; /* Começa sem margem */
+    transition: margin-left 0.3s ease;
+}
+
+/* Esta é a regra chave: quando a sidebar está ativa, empurra o main-content */
+.sidebar.active ~ .main-content {
+    margin-left: 250px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.main-header h2 {
+    margin: 0;
+    font-size: 2em;
+    color: #2c3e50;
+}
+
+.header-left-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 0;
+}
+
+.header-right-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Cards de Status */
+.status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 6px;
+    background-color: #3498db;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+/* Formulários e Botões */
+.new-requisition-section,
+.new-fornecedor-section,
+.new-contrato-section {
+    background-color: #eaf1f7;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #dcdcdc;
+}
+
+.new-requisition-container,
+.new-fornecedor-container,
+.new-contrato-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Esta é a regra principal que irá garantir que os campos fiquem lado a lado */
+.new-requisition-group,
+.new-fornecedor-group,
+.new-contrato-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+}
+/* 1. Estiliza o texto de dica (placeholder) para campos de texto */
+.input-field::placeholder {
+    color: #95a5a6;
+}
+
+/* 2. Estiliza o texto dos campos de seleção e de data ANTES da seleção */
+.input-field {
+    color: #95a5a6;
+}
+
+/* 3. Estiliza o texto dos campos de seleção e de data DEPOIS da seleção */
+.input-field:valid {
+    color: #333;
+}
+
+/* 4. Certifica-se de que os campos de seleção sem um valor inicial também tenham a cor cinza */
+.input-field.input-select:not([value=""]) {
+    color: #95a5a6;
+}
+
+/* Estilo base para todos os campos de entrada */
+.input-field,
+.input-select,
+.input-date {
+    flex-basis: 0;
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    min-width: 120px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* Estilo específico para o wrapper do autocomplete, remove a borda do wrapper */
+.autocomplete-wrapper {
+    flex-basis: 0;
+    flex-grow: 1;
+    position: relative;
+    min-width: 120px;
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+}
+
+/* Aplica o estilo de borda e padding ao input DENTRO do autocomplete-wrapper */
+.autocomplete-wrapper .input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-sizing: border-box;
 }
 
 .add-button {
-    width: auto;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-/* Estilo para a seção de formulário de requisição */
-.new-requisicao-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    margin-top: 20px; /* Adiciona um espaço para não grudar no header */
-}
-
-/* Layout de grid para o formulário de requisição */
-.requisicao-form-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Divide o formulário em 3 colunas */
-    gap: 20px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    display: block;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.requisicao-form-grid .input-group {
-    display: flex;
-    flex-direction: column;
+/* Estilo do ícone dentro do botão `add-button` */
+.add-button .fas {
+    font-size: 1.2em;
+    line-height: 1;
 }
 
-.requisicao-form-grid .input-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
+/* Tabelas */
+.content-table {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.requisicao-form-grid .input-group input,
-.requisicao-form-grid .input-group textarea,
-.requisicao-form-grid .input-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.requisicao-form-grid .full-width {
-    grid-column: 1 / -1; /* Faz este grupo ocupar todas as colunas */
+table th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
 }
 
-/* Efeito de mover o botão para o lado e transformar em "fechar" */
-.main-header {
-    transition: all 0.3s ease-in-out;
-    position: relative; /* Para que os botões se movam dentro do header */
+table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.80em;
 }
 
-.main-header.form-open .header-right-group {
-    left: 20px; /* Move o grupo de botões para a esquerda */
-}
+/* --- ADIÇÕES PARA O AUTOCOMPLETE E FORMULÁRIOS EM GRID --- */
 
-.main-header .header-right-group {
-    position: relative;
-    transition: left 0.3s ease-in-out;
-}
-/* Estilos para a seção de formulário em geral */
-.new-requisicao-section, .new-contrato-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
-
-/* Centraliza os títulos do formulário */
-.new-requisicao-section h3, .new-contrato-section h3 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Layout de grid para os formulários de requisição e contratos */
+/* Classes para o novo layout de grid */
 .form-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
-    gap: 15px; /* Espaçamento menor entre os campos */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
 }
 
 .form-grid .input-group {
-    display: flex;
-    flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Estilo para campos de formulário */
-.form-grid input, .form-grid textarea, .form-grid select {
-    width: 100%;
-    padding: 8px; /* Padding um pouco menor para campos mais compactos */
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px; /* Fonte menor */
-    box-sizing: border-box;
-}
-
-/* Faz o grupo de Observação ocupar a largura total */
 .form-grid .full-width {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1;
 }
 
-/* Centraliza o botão "Salvar" */
-.submit-group {
-    grid-column: 1 / -1; /* Ocupa todas as colunas */
-    display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    margin-top: 10px;
+.form-grid .submit-group {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
 }
 
-/* Estilo para o botão "Salvar" */
-.submit-group .add-button {
-    width: auto;
-    padding: 10px 20px;
-    font-size: 14px;
+/* Estilo para campos de formulário e autocomplete */
+.form-grid input, 
+.form-grid textarea, 
+.form-grid select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
+
+.autocomplete-container {
+    position: relative;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+/* FIM DAS ADIÇÕES */
