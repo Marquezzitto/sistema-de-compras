@@ -19,17 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÃO GLOBAL DE FETCH ---
     async function fetchData(endpoint) {
-        const selectedFilial = localStorage.getItem('selectedFilial');
-        let fullEndpoint = endpoint;
-        
-        // Adiciona o filtro de filial à URL, se houver uma selecionada
-        if (selectedFilial && selectedFilial !== 'todas') {
-            const separator = endpoint.includes('?') ? '&' : '?';
-            fullEndpoint += `${separator}filial=${selectedFilial}`;
-        }
-        
         try {
-            const response = await fetch(`${API_URL}/${fullEndpoint}`);
+            const response = await fetch(`${API_URL}/${endpoint}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Erro ${response.status}`);
@@ -180,6 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderFornecedoresTable = async () => {
             const fornecedores = await fetchData('fornecedores');
             fornecedoresTableBody.innerHTML = '';
+            
+            if (fornecedores.length === 0) {
+                const emptyRow = fornecedoresTableBody.insertRow();
+                emptyRow.innerHTML = `<td colspan="10" class="empty-message">Nenhum fornecedor encontrado para a filial selecionada.</td>`;
+                return;
+            }
+
             fornecedores.forEach(f => {
                 const row = fornecedoresTableBody.insertRow();
                 const inicioVigencia = f.inicio_vigencia ? new Date(f.inicio_vigencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
@@ -274,6 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderRequisitionsTable = async () => {
             const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
+            
+            if (requisicoes.length === 0) {
+                const emptyRow = requisitionTableBody.insertRow();
+                emptyRow.innerHTML = `<td colspan="10" class="empty-message">Nenhuma requisição encontrada para a filial selecionada.</td>`;
+                return;
+            }
+
             requisicoes.forEach(req => {
                 const row = requisitionTableBody.insertRow();
                 row.dataset.id = req.id;
@@ -376,6 +381,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderContratosTable = async () => {
             const contratos = await fetchData('contratos');
             contratosTableBody.innerHTML = '';
+
+            if (contratos.length === 0) {
+                const emptyRow = contratosTableBody.insertRow();
+                emptyRow.innerHTML = `<td colspan="7" class="empty-message">Nenhum contrato encontrado para a filial selecionada.</td>`;
+                return;
+            }
+
             contratos.forEach(contrato => {
                 const row = contratosTableBody.insertRow();
                 row.dataset.id = contrato.id;
@@ -460,6 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderContratosTable();
     }
+    
     // --- ROTEADOR ---
     const path = window.location.pathname;
     const page = path.split("/").pop();
