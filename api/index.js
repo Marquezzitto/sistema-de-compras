@@ -48,12 +48,25 @@ app.get('/api/filiais', async (req, res) => {
     }
 });
 
-// --- API PARA FORNECEDORES ---
+// --- API PARA FORNECEDORES (AJUSTADA PARA FILTRAR POR FILIAL E "NAC") ---
 app.get('/api/fornecedores', async (req, res) => {
+    const { filial } = req.query;
+    let query = 'SELECT * FROM fornecedores';
+    const params = [];
+
+    if (filial && filial.toLowerCase() !== 'todas') {
+        query += ' WHERE filial = $1 OR filial = $2';
+        params.push(filial, 'NAC');
+    }
+
+    query += ' ORDER BY nome ASC';
+
     try {
-        const result = await db.query('SELECT * FROM fornecedores ORDER BY nome ASC');
+        const result = await db.query(query, params);
         res.json(result.rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.post('/api/fornecedores', async (req, res) => {
@@ -89,11 +102,22 @@ app.put('/api/fornecedores/:id', async (req, res) => {
     }
 });
 
-// --- API PARA REQUISIÇÕES ---
+// --- API PARA REQUISIÇÕES (AJUSTADA PARA FILTRAR POR FILIAL) ---
 app.get('/api/requisicoes/:status', async(req, res) => {
     const { status } = req.params;
+    const { filial } = req.query;
+    const params = [status];
+    let query = 'SELECT * FROM requisicoes WHERE status = $1';
+
+    if (filial && filial.toLowerCase() !== 'todas') {
+        query += ' AND filial = $2';
+        params.push(filial);
+    }
+    
+    query += ' ORDER BY id DESC';
+
     try {
-        const result = await db.query('SELECT * FROM requisicoes WHERE status = $1 ORDER BY id DESC', [status]);
+        const result = await db.query(query, params);
         res.json(result.rows);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -119,13 +143,32 @@ app.put('/api/requisicoes/:id/status', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// --- API PARA CONTRATOS (Adicionar novo contrato) ---
+// --- API PARA CONTRATOS (AJUSTADA PARA FILTRAR POR FILIAL) ---
+app.get('/api/contratos', async (req, res) => {
+    const { filial } = req.query;
+    let query = 'SELECT * FROM contratos';
+    const params = [];
+    
+    if (filial && filial.toLowerCase() !== 'todas') {
+        query += ' WHERE filial = $1';
+        params.push(filial);
+    }
+
+    query += ' ORDER BY id DESC';
+
+    try {
+        const result = await db.query(query, params);
+        res.json(result.rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Rota de criação de contrato
 app.post('/api/contratos', async (req, res) => {
-    const { numero, fornecedor, inicio, fim, valor, status } = req.body;
+    const { numero, fornecedor, inicio, fim, valor, status, filial } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO contratos (numero, fornecedor, inicio, fim, valor, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-            [numero, fornecedor, inicio, fim, valor, status]
+            'INSERT INTO contratos (numero, fornecedor, inicio, fim, valor, status, filial) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+            [numero, fornecedor, inicio, fim, valor, status, filial]
         );
         res.status(201).json({ id: result.rows[0].id });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -133,26 +176,42 @@ app.post('/api/contratos', async (req, res) => {
 
 // --- API PARA DASHBOARD ---
 app.get('/api/dashboard-stats', async (req, res) => {
-    try {
-        const pagamentosPendentesQuery = db.query("SELECT COUNT(*) FROM requisicoes WHERE status = 'pagamento_pendente'");
-        const pagamentosRealizadosQuery = db.query("SELECT COUNT(*) FROM requisicoes WHERE status = 'pago'");
-        const contratosRealizadosQuery = db.query("SELECT COUNT(*) FROM contratos WHERE status = 'Ativo'");
-        const contratosPendentesQuery = db.query("SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'");
+    const { filial } = req.query;
+    let pagamentosPendentesQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pagamento_pendente'";
+    let pagamentosRealizadosQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pago'";
+    let contratosRealizadosQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Ativo'";
+    let contratosPendentesQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'";
+    const params = [];
 
-        const [pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes] = await Promise.all([
-            pagamentosPendentesQuery, pagamentosRealizadosQuery, contratosRealizadosQuery, contratosPendentesQuery
+    if (filial && filial.toLowerCase() !== 'todas') {
+        pagamentosPendentesQuery += ` AND filial = $1`;
+        pagamentosRealizadosQuery += ` AND filial = $1`;
+        contratosRealizadosQuery += ` AND filial = $1`;
+        contratosPendentesQuery += ` AND filial = $1`;
+        params.push(filial);
+    }
+
+    try {
+        const pagamentosPendentes = db.query(pagamentosPendentesQuery, params);
+        const pagamentosRealizados = db.query(pagamentosRealizadosQuery, params);
+        const contratosRealizados = db.query(contratosRealizadosQuery, params);
+        const contratosPendentes = db.query(contratosPendentesQuery, params);
+
+        const [pagamentosPendentesResult, pagamentosRealizadosResult, contratosRealizadosResult, contratosPendentesResult] = await Promise.all([
+            pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes
         ]);
 
         res.json({
-            pagamentos_pendentes: parseInt(pagamentosPendentes.rows[0].count),
-            pagamentos_realizados: parseInt(pagamentosRealizados.rows[0].count),
-            contratos_realizados: parseInt(contratosRealizados.rows[0].count),
-            contratos_pendentes: parseInt(contratosPendentes.rows[0].count),
+            pagamentos_pendentes: parseInt(pagamentosPendentesResult.rows[0].count),
+            pagamentos_realizados: parseInt(pagamentosRealizadosResult.rows[0].count),
+            contratos_realizados: parseInt(contratosRealizadosResult.rows[0].count),
+            contratos_pendentes: parseInt(contratosPendentesResult.rows[0].count),
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 // Exporta o app para a Vercel usar
 module.exports = app;
