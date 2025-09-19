@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFornecedorAutocomplete('fornecedor-cnpj', 'fornecedor-cnpj-suggestions');
     }
 
-    // --- REQUISIÇÕES ---
+        // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
@@ -366,6 +366,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const requisicaoForm = document.getElementById('requisicao-form');
         const mainHeader = document.querySelector('.main-header');
         const requisicaoFilialSelect = document.getElementById('requisicao-filial');
+
+        // Funcao para adicionar uma única linha à tabela - AGORA ESTÁ NO LUGAR CERTO
+        const addRequisitionToTable = (req) => {
+            const row = requisitionTableBody.insertRow(0); // Adiciona no início da tabela
+            row.dataset.id = req.id;
+            const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+            
+            const isNFandOCFilled = req.nf && req.oc;
+            const approveButtonHtml = isNFandOCFilled 
+                ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
+                : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
+
+            row.innerHTML = `
+                <td><button class="edit-btn">✏️</button></td>
+                <td>${req.tipo || ''}</td>
+                <td>${data}</td>
+                <td>${req.requisicao || ''}</td>
+                <td>${req.fornecedor || ''}</td>
+                <td>${req.filial || ''}</td>
+                <td>${req.nf || ''}</td>
+                <td>${req.oc || ''}</td>
+                <td>${req.observacao || ''}</td>
+                <td>
+                    ${approveButtonHtml}
+                    <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
+                </td>
+            `;
+        };
 
         const renderFilialSelect = async () => {
             const filiais = await fetchData('filiais');
@@ -394,31 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            requisicoes.forEach(req => {
-                const row = requisitionTableBody.insertRow();
-                row.dataset.id = req.id;
-                const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-                
-                const isNFandOCFilled = req.nf && req.oc;
-                const approveButtonHtml = isNFandOCFilled 
-                    ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
-                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
-
-                row.innerHTML = `
-                    <td><button class="edit-btn">✏️</button></td>
-                    <td>${req.tipo || ''}</td>
-                    <td>${data}</td>
-                    <td>${req.requisicao || ''}</td>
-                    <td>${req.fornecedor || ''}</td>
-                    <td>${req.nf || ''}</td>
-                    <td>${req.oc || ''}</td>
-                    <td>${req.observacao || ''}</td>
-                    <td>
-                        ${approveButtonHtml}
-                        <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
-                    </td>
-                `;
-            });
+            requisicoes.forEach(req => addRequisitionToTable(req));
         };
 
         if (addRequisicaoBtn && requisicaoFormSection) {
@@ -494,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderRequisitionsTable();
         setupFornecedorAutocomplete('requisicao-fornecedor', 'requisicao-fornecedor-suggestions');
-}
+    }
 
     // --- CONTRATOS ---
     async function setupContratos() {
