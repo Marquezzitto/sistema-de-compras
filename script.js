@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+// --- FORNECEDORES ---
 async function setupFornecedores() {
     const fornecedoresTableBody = document.getElementById('fornecedores-table-body');
     const addFornecedorBtn = document.getElementById('toggle-fornecedor-form');
@@ -227,10 +228,7 @@ async function setupFornecedores() {
             const formData = new FormData(fornecedorForm);
             const fornecedorData = Object.fromEntries(formData.entries());
             
-            const filialSelecionada = localStorage.getItem('selectedFilial');
-            if (filialSelecionada) {
-                fornecedorData.filial = filialSelecionada;
-            }
+            // A filial agora vem diretamente do formulário, não precisa adicionar manualmente
 
             try {
                 let method = 'POST';
