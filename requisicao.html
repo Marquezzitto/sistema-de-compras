@@ -104,9 +104,17 @@
                         <label for="requisicao-oc">OC:</label>
                         <input type="text" id="requisicao-oc" name="oc" placeholder="Número da OC">
                     </div>
+                    <div class="input-group">
+                        <label for="requisicao-filial">Filial:</label>
+                        <input type="text" id="requisicao-filial" name="filial" placeholder="Ex: SAO" required>
+                    </div>
                     <div class="input-group full-width">
                         <label for="requisicao-observacao">Observação:</label>
                         <textarea id="requisicao-observacao" name="observacao" placeholder="Detalhes da requisição"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="requisicao-status">Status:</label>
+                        <input type="text" id="requisicao-status" name="status" value="pendente" readonly>
                     </div>
                     <div class="submit-group">
                         <button type="submit" id="add-requisicao-submit-btn" class="add-button">
