@@ -987,75 +987,23 @@ table td {
     position: relative;
     transition: left 0.3s ease-in-out;
 }
-/* Estilos para a seção de formulário em geral */
-.new-requisicao-section, .new-contrato-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
+/* --- ADIÇÕES PARA O AUTOCOMPLETE --- */
 
-/* Centraliza os títulos do formulário */
-.new-requisicao-section h3, .new-contrato-section h3 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Layout de grid para os formulários de requisição e contratos */
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
-    gap: 15px; /* Espaçamento menor entre os campos */
-}
-
-.form-grid .input-group {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Estilo para campos de formulário */
-.form-grid input, .form-grid textarea, .form-grid select {
-    width: 100%;
-    padding: 8px; /* Padding um pouco menor para campos mais compactos */
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px; /* Fonte menor */
-    box-sizing: border-box;
-}
-
-/* Faz o grupo de Observação ocupar a largura total */
-.form-grid .full-width {
-    grid-column: 1 / -1;
-}
-
-/* Centraliza o botão "Salvar" */
-.submit-group {
-    grid-column: 1 / -1; /* Ocupa todas as colunas */
-    display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    margin-top: 10px;
-}
-
-/* Estilo para o botão "Salvar" */
-.submit-group .add-button {
-    width: auto;
-    padding: 10px 20px;
-    font-size: 14px;
-}
 /* Estilo para o container do autocomplete */
 .autocomplete-container {
-    position: relative; /* Para que a lista de sugestões fique por cima do resto */
+    position: relative;
+    /* Adiciona flex-grow e flex-basis para que se alinhe com os outros inputs */
+    flex-grow: 1;
+    flex-basis: 0;
 }
 
 /* Estilo para a lista de sugestões */
 .suggestions-list {
     position: absolute;
-    top: 100%; /* Posiciona a lista abaixo do input */
+    top: 100%;
     left: 0;
     right: 0;
-    z-index: 10; /* Garante que a lista fique visível */
+    z-index: 10;
     background-color: #fff;
     border: 1px solid #ccc;
     border-top: none;
@@ -1075,4 +1023,10 @@ table td {
 
 .suggestions-list li:hover {
     background-color: #f0f0f0;
+}
+
+/* Garante que os inputs dentro do contêiner de autocomplete tenham 100% de largura */
+.autocomplete-container input {
+    width: 100%;
+    box-sizing: border-box; /* Para que o padding não cause overflow */
 }
