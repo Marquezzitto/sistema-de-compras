@@ -78,7 +78,7 @@ app.get('/api/fornecedores/search', async (req, res) => {
 
     try {
         const result = await db.query(
-            'SELECT nome, cnpj, filial FROM fornecedores WHERE nome ILIKE $1 ORDER BY nome ASC',
+            'SELECT nome, cnpj, filial FROM fornecedores WHERE nome ILIKE $1 OR cnpj ILIKE $1 ORDER BY nome ASC',
             [`%${query}%`]
         );
         res.json(result.rows);
