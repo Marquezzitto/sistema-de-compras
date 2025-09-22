@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- LÓGICA DO AUTOCOMPLETE ---
-    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector) {
+    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector, otherFields) {
         const inputElement = document.getElementById(inputSelector);
         const suggestionsElement = document.getElementById(suggestionsSelector);
 
@@ -92,6 +92,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 suggestionsElement.innerHTML = '';
             }
+        });
+    }
+
+    // --- LOGIN E CADASTRO ---
+    const loginButton = document.getElementById('login-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+                
+                localStorage.setItem('isLoggedIn', 'true');
+                showNotification('Login bem-sucedido!', 'success');
+                setTimeout(() => window.location.href = 'Dashboard.html', 1000);
+            } catch (error) {
+                showNotification(error.message || 'Erro ao fazer login.', 'error');
+            }
+        });
+    }
+
+    const registerButton = document.getElementById('register-button');
+    if (registerButton) {
+        registerButton.addEventListener('click', async () => {
+            const newUsername = document.getElementById('new-username').value;
+            const newPassword = document.getElementById('new-password').value;
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: newUsername, password: newPassword })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+
+                showNotification('Cadastro realizado com sucesso!', 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                showNotification(error.message || 'Erro no cadastro.', 'error');
+            }
+        });
+    }
+
+    // --- LÓGICA GLOBAL ---
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isLoggedIn');
+            showNotification('Sessão encerrada.', 'success');
+            setTimeout(() => window.location.href = 'index.html', 1000);
+        });
+    }
+    
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            menuToggle.classList.toggle('open');
         });
     }
 
@@ -293,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFornecedorAutocomplete('fornecedor-cnpj', 'fornecedor-cnpj-suggestions');
     }
 
-    // --- REQUISIÇÕES ---
+        // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
@@ -310,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const isNFandOCFilled = req.nf && req.oc;
             const approveButtonHtml = isNFandOCFilled 
-                ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
+                ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
                 : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
 
             row.innerHTML = `
@@ -319,13 +384,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${data}</td>
                 <td>${req.requisicao || ''}</td>
                 <td>${req.fornecedor || ''}</td>
-                <td>${req.filial || ''}</td>
                 <td>${req.nf || ''}</td>
                 <td>${req.oc || ''}</td>
                 <td>${req.observacao || ''}</td>
                 <td>
                     ${approveButtonHtml}
-                    <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
+                    <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
                 </td>
             `;
         };
