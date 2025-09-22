@@ -149,7 +149,6 @@ app.post('/api/requisicoes', async (req, res) => {
             'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
             [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
         );
-        // Retorna o objeto da requisição completa que foi inserida
         res.status(201).json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
