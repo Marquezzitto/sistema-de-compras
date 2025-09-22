@@ -1270,29 +1270,35 @@ table td {
     cursor: pointer;
 }
 /* ============================================= */
-/* AJUSTES NA TABELA DE REQUISIÇÃO */
+/* AJUSTES NA TABELA DE REQUISIÇÃO (VERSÃO MELHORADA) */
 /* ============================================= */
 
-/* --- AJUSTE NA LARGURA DAS COLUNAS --- */
-
-/* Define uma largura menor para a coluna 'Data' */
-#requisition-table .col-data {
-    width: 120px; /* Você pode ajustar este valor */
+/* Faz com que a tabela obedeça as larguras definidas */
+#requisition-table {
+    table-layout: fixed;
+    width: 100%;
 }
 
-/* Define uma largura menor para a coluna 'Requisição' */
+/* Evita que o texto quebre a linha e garante a mesma altura para todas as linhas */
+#requisition-table td {
+    white-space: nowrap;      /* Impede a quebra de linha */
+    overflow: hidden;         /* Esconde o texto que ultrapassar a célula */
+    text-overflow: ellipsis;  /* Adiciona "..." no final do texto cortado */
+}
+
+/* --- LARGURA DAS COLUNAS --- */
+
+#requisition-table .col-data,
 #requisition-table .col-requisicao {
-    width: 120px; /* Você pode ajustar este valor */
+    width: 120px; /* Largura para Data e Requisição */
 }
 
-/* --- AJUSTE NOS ÍCONES DE STATUS (X e V) --- */
+/* --- AJUSTES NOS ÍCONES DE STATUS (X e V) --- */
 
-/* Pega a célula da coluna 'Status' */
 #requisition-table .col-status {
-    /* Alinha os ícones um ao lado do outro */
+    width: 130px;            /* Largura maior para a coluna Status */
     display: flex;
-    justify-content: center; /* Centraliza os ícones no espaço da célula */
-    align-items: center;     /* Alinha verticalmente, caso a linha seja alta */
-    gap: 15px;               /* Cria um espaço entre os ícones */
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
 }
-/* FIM DAS ADIÇÕES */
