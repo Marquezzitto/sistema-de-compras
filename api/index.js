@@ -87,6 +87,7 @@ app.get('/api/fornecedores/search', async (req, res) => {
     }
 });
 
+
 app.post('/api/fornecedores', async (req, res) => {
     const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
