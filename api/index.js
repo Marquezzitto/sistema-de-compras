@@ -87,7 +87,6 @@ app.get('/api/fornecedores/search', async (req, res) => {
     }
 });
 
-
 app.post('/api/fornecedores', async (req, res) => {
     const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
@@ -228,7 +227,7 @@ app.post('/api/contratos', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// --- API PARA DASHBOARD ---
+// --- API PARA DASHBOARD (AJUSTADA PARA FILTRAR POR FILIAL) ---
 app.get('/api/dashboard-stats', async (req, res) => {
     const { filial } = req.query;
     const params = [];
