@@ -78,7 +78,7 @@ app.get('/api/fornecedores/search', async (req, res) => {
 
     try {
         const result = await db.query(
-            'SELECT nome, cnpj, filial, acao FROM fornecedores WHERE nome ILIKE $1 OR cnpj ILIKE $1 ORDER BY nome ASC',
+            'SELECT nome, cnpj, filial FROM fornecedores WHERE nome ILIKE $1 OR cnpj ILIKE $1 ORDER BY nome ASC',
             [`%${query}%`]
         );
         res.json(result.rows);
@@ -87,14 +87,15 @@ app.get('/api/fornecedores/search', async (req, res) => {
     }
 });
 
+
 app.post('/api/fornecedores', async (req, res) => {
     const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO fornecedores (filial, nome, cnpj, pagamento, acordo, inicio_vigencia, final_vigencia, acao) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+            'INSERT INTO fornecedores (filial, nome, cnpj, pagamento, acordo, inicio_vigencia, final_vigencia, acao) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
             [filial, nome, cnpj, pagamento, acordo, inicioVigencia || null, finalVigencia || null, acao]
         );
-        res.status(201).json(result.rows[0]);
+        res.status(201).json({ id: result.rows[0].id });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -128,8 +129,8 @@ app.get('/api/requisicoes/:status', async(req, res) => {
     let query = 'SELECT * FROM requisicoes WHERE status = $1';
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' AND (LOWER(unaccent(filial)) = LOWER(unaccent($2)) OR filial IS NULL OR filial = $3)';
-        params.push(filial, '');
+        query += ' AND filial = $2';
+        params.push(filial);
     }
     
     query += ' ORDER BY id DESC';
@@ -141,6 +142,7 @@ app.get('/api/requisicoes/:status', async(req, res) => {
 });
 
 // Rota de criação de requisição
+// Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
@@ -148,8 +150,11 @@ app.post('/api/requisicoes', async (req, res) => {
             'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
             [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
         );
+        // Retorna o objeto da requisição completa que foi inserida
         res.status(201).json(result.rows[0]);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
@@ -227,35 +232,37 @@ app.post('/api/contratos', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// --- API PARA DASHBOARD (AJUSTADA PARA FILTRAR POR FILIAL) ---
+// --- API PARA DASHBOARD ---
 app.get('/api/dashboard-stats', async (req, res) => {
     const { filial } = req.query;
-    const params = [];
     let pagamentosPendentesQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pagamento_pendente'";
     let pagamentosRealizadosQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pago'";
     let contratosRealizadosQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Ativo'";
     let contratosPendentesQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'";
+    const params = [];
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        pagamentosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        pagamentosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        contratosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        contratosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
+        pagamentosPendentesQuery += ` AND filial = $1`;
+        pagamentosRealizadosQuery += ` AND filial = $1`;
+        contratosRealizadosQuery += ` AND filial = $1`;
+        contratosPendentesQuery += ` AND filial = $1`;
         params.push(filial);
     }
 
     try {
-        const [pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes] = await Promise.all([
-            db.query(pagamentosPendentesQuery, params),
-            db.query(pagamentosRealizadosQuery, params),
-            db.query(contratosRealizadosQuery, params),
-            db.query(contratosPendentesQuery, params)
+        const pagamentosPendentes = db.query(pagamentosPendentesQuery, params);
+        const pagamentosRealizados = db.query(pagamentosRealizadosQuery, params);
+        const contratosRealizados = db.query(contratosRealizadosQuery, params);
+        const contratosPendentes = db.query(contratosPendentesQuery, params);
+
+        const [pagamentosPendentesResult, pagamentosRealizadosResult, contratosRealizadosResult, contratosPendentesResult] = await Promise.all([
+            pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes
         ]);
 
         res.json({
-            pagamentos_pendentes: parseInt(pagamentosPendentes.rows[0].count),
-            pagamentos_realizados: parseInt(pagamentosRealizados.rows[0].count),
-            contratos_realizados: parseInt(contratosRealizados.rows[0].count),
+            pagamentos_pendentes: parseInt(pagamentosPendentesResult.rows[0].count),
+            pagamentos_realizados: parseInt(pagamentosRealizadosResult.rows[0].count),
+            contratos_realizados: parseInt(contratosRealizadosResult.rows[0].count),
             contratos_pendentes: parseInt(contratosPendentesResult.rows[0].count),
         });
     } catch (err) {
