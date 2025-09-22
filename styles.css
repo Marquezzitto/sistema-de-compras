@@ -1269,4 +1269,30 @@ table td {
     color: #e74c3c; /* Vermelho para o X */
     cursor: pointer;
 }
+/* ============================================= */
+/* AJUSTES NA TABELA DE REQUISIÇÃO */
+/* ============================================= */
+
+/* --- AJUSTE NA LARGURA DAS COLUNAS --- */
+
+/* Define uma largura menor para a coluna 'Data' */
+#requisition-table .col-data {
+    width: 120px; /* Você pode ajustar este valor */
+}
+
+/* Define uma largura menor para a coluna 'Requisição' */
+#requisition-table .col-requisicao {
+    width: 120px; /* Você pode ajustar este valor */
+}
+
+/* --- AJUSTE NOS ÍCONES DE STATUS (X e V) --- */
+
+/* Pega a célula da coluna 'Status' */
+#requisition-table .col-status {
+    /* Alinha os ícones um ao lado do outro */
+    display: flex;
+    justify-content: center; /* Centraliza os ícones no espaço da célula */
+    align-items: center;     /* Alinha verticalmente, caso a linha seja alta */
+    gap: 15px;               /* Cria um espaço entre os ícones */
+}
 /* FIM DAS ADIÇÕES */
