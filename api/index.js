@@ -129,8 +129,8 @@ app.get('/api/requisicoes/:status', async(req, res) => {
     let query = 'SELECT * FROM requisicoes WHERE status = $1';
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' AND filial = $2';
-        params.push(filial);
+        query += ' AND (filial = $2 OR filial IS NULL OR filial = $3)'; // Ajuste na lógica para incluir nulos e vazios
+        params.push(filial, '');
     }
     
     query += ' ORDER BY id DESC';
@@ -142,19 +142,15 @@ app.get('/api/requisicoes/:status', async(req, res) => {
 });
 
 // Rota de criação de requisição
-// Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-            [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
+            'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
+            [tipo, data, requisicao, fornecedor, filial, nf || null, oc || null, observacao || null, status || 'pendente']
         );
-        // Retorna o objeto da requisição completa que foi inserida
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+        res.status(201).json({ id: result.rows[0].id });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
