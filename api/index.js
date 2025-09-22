@@ -146,7 +146,7 @@ app.post('/api/requisicoes', async (req, res) => {
     try {
         const result = await db.query(
             'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-            [tipo, data, requisicao, fornecedor, filial, nf || null, oc || null, observacao || null, status || 'pendente']
+            [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
         );
         res.status(201).json(result.rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
