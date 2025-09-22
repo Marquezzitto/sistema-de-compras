@@ -78,7 +78,7 @@ app.get('/api/fornecedores/search', async (req, res) => {
 
     try {
         const result = await db.query(
-            'SELECT nome, cnpj, filial FROM fornecedores WHERE nome ILIKE $1 OR cnpj ILIKE $1 ORDER BY nome ASC',
+            'SELECT nome, cnpj, filial, acao FROM fornecedores WHERE nome ILIKE $1 OR cnpj ILIKE $1 ORDER BY nome ASC',
             [`%${query}%`]
         );
         res.json(result.rows);
@@ -87,15 +87,14 @@ app.get('/api/fornecedores/search', async (req, res) => {
     }
 });
 
-
 app.post('/api/fornecedores', async (req, res) => {
     const { filial, nome, cnpj, pagamento, acordo, inicioVigencia, finalVigencia, acao } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO fornecedores (filial, nome, cnpj, pagamento, acordo, inicio_vigencia, final_vigencia, acao) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+            'INSERT INTO fornecedores (filial, nome, cnpj, pagamento, acordo, inicio_vigencia, final_vigencia, acao) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
             [filial, nome, cnpj, pagamento, acordo, inicioVigencia || null, finalVigencia || null, acao]
         );
-        res.status(201).json({ id: result.rows[0].id });
+        res.status(201).json(result.rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -147,12 +146,10 @@ app.post('/api/requisicoes', async (req, res) => {
     try {
         const result = await db.query(
             'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-            [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
+            [tipo, data, requisicao, fornecedor, filial, nf || null, oc || null, observacao || null, status || 'pendente']
         );
         res.status(201).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
