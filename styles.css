@@ -1,10 +1,3 @@
-/* Adicione este código no INÍCIO do seu arquivo styles.css */
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
 /* Estilos Gerais */
 body {
     font-family: Arial, sans-serif;
@@ -1277,33 +1270,44 @@ table td {
     cursor: pointer;
 }
 /* ============================================= */
-/* AJUSTES NA TABELA DE REQUISIÇÃO (VERSÃO MELHORADA) */
+/* ESTILO FINAL E CONSISTENTE PARA A TABELA */
 /* ============================================= */
 
-/* Faz com que a tabela obedeça as larguras definidas */
+/* Garante que a tabela use as larguras definidas */
 #requisition-table {
-    table-layout: fixed;
     width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse; /* Une as bordas das células */
 }
 
-/* Evita que o texto quebre a linha e garante a mesma altura para todas as linhas */
+/* Zera e redefine o estilo para TODAS as células (cabeçalho e dados) */
+#requisition-table th,
 #requisition-table td {
-    white-space: nowrap;      /* Impede a quebra de linha */
-    overflow: hidden;         /* Esconde o texto que ultrapassar a célula */
-    text-overflow: ellipsis;  /* Adiciona "..." no final do texto cortado */
+    padding: 12px 10px;      /* Define um preenchimento interno igual para todos */
+    text-align: left;        /* Alinha o texto à esquerda */
+    border: none;            /* Remove qualquer borda individual */
+
+    /* Garante que as linhas fiquem com a mesma altura */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Adiciona a linha separadora apenas embaixo de cada fileira */
+#requisition-table tr {
+    border-bottom: 1px solid #e0e0e0;
 }
 
 /* --- LARGURA DAS COLUNAS --- */
 
 #requisition-table .col-data,
 #requisition-table .col-requisicao {
-    width: 120px; /* Largura para Data e Requisição */
+    width: 110px;
 }
 
-/* --- AJUSTES NOS ÍCONES DE STATUS (X e V) --- */
-
+/* --- ÍCONES DE STATUS --- */
 #requisition-table .col-status {
-    width: 130px;            /* Largura maior para a coluna Status */
+    width: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
