@@ -1,3 +1,10 @@
+/* Adicione este código no INÍCIO do seu arquivo styles.css */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 /* Estilos Gerais */
 body {
     font-family: Arial, sans-serif;
