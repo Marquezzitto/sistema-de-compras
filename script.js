@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- LÓGICA DO AUTOCOMPLETE ---
-    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector, otherFields) {
+    async function setupFornecedorAutocomplete(inputSelector, suggestionsSelector) {
         const inputElement = document.getElementById(inputSelector);
         const suggestionsElement = document.getElementById(suggestionsSelector);
 
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFornecedorAutocomplete('fornecedor-cnpj', 'fornecedor-cnpj-suggestions');
     }
 
-        // --- REQUISIÇÕES ---
+    // --- REQUISIÇÕES ---
     async function setupRequisicao() {
         const requisitionTableBody = document.getElementById('requisition-table-body');
         const addRequisicaoBtn = document.getElementById('toggle-requisition-form');
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const isNFandOCFilled = req.nf && req.oc;
             const approveButtonHtml = isNFandOCFilled 
-                ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
+                ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
                 : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
 
             row.innerHTML = `
@@ -384,12 +384,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${data}</td>
                 <td>${req.requisicao || ''}</td>
                 <td>${req.fornecedor || ''}</td>
+                <td>${req.filial || ''}</td>
                 <td>${req.nf || ''}</td>
                 <td>${req.oc || ''}</td>
                 <td>${req.observacao || ''}</td>
                 <td>
                     ${approveButtonHtml}
-                    <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
+                    <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
                 </td>
             `;
         };
