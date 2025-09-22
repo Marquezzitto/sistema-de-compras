@@ -367,15 +367,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
         const requisicaoFilialSelect = document.getElementById('requisicao-filial');
 
-        // Funcao para adicionar uma única linha à tabela - AGORA ESTÁ NO LUGAR CERTO
+        // Funcao para adicionar uma única linha à tabela
         const addRequisitionToTable = (req) => {
-            const row = requisitionTableBody.insertRow(0); // Adiciona no início da tabela
+            const row = requisitionTableBody.insertRow(0);
             row.dataset.id = req.id;
             const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
             
             const isNFandOCFilled = req.nf && req.oc;
             const approveButtonHtml = isNFandOCFilled 
-                ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
+                ? `<span class="status-icon approve-btn" data-id="${req.id}" style="cursor:pointer;">✔️</span>`
                 : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
 
             row.innerHTML = `
@@ -384,13 +384,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${data}</td>
                 <td>${req.requisicao || ''}</td>
                 <td>${req.fornecedor || ''}</td>
-                <td>${req.filial || ''}</td>
                 <td>${req.nf || ''}</td>
                 <td>${req.oc || ''}</td>
                 <td>${req.observacao || ''}</td>
                 <td>
                     ${approveButtonHtml}
-                    <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
+                    <span class="status-icon reject-btn" data-id="${req.id}" style="cursor:pointer;">✖️</span>
                 </td>
             `;
         };
