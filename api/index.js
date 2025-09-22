@@ -129,8 +129,8 @@ app.get('/api/requisicoes/:status', async(req, res) => {
     let query = 'SELECT * FROM requisicoes WHERE status = $1';
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' AND (LOWER(unaccent(filial)) = LOWER(unaccent($2)) OR filial IS NULL)';
-        params.push(filial);
+        query += ' AND (LOWER(unaccent(filial)) = LOWER(unaccent($2)) OR filial IS NULL OR filial = $3)';
+        params.push(filial, '');
     }
     
     query += ' ORDER BY id DESC';
@@ -258,7 +258,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             pagamentos_pendentes: parseInt(pagamentosPendentes.rows[0].count),
             pagamentos_realizados: parseInt(pagamentosRealizados.rows[0].count),
             contratos_realizados: parseInt(contratosRealizados.rows[0].count),
-            contratos_pendentes: parseInt(contratosPendentes.rows[0].count),
+            contratos_pendentes: parseInt(contratosPendentesResult.rows[0].count),
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
