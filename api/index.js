@@ -121,7 +121,7 @@ app.put('/api/fornecedores/:id', async (req, res) => {
     }
 });
 
-// --- API PARA REQUISIÇÕES (AGORA FILTRA CORRETAMENTE) ---
+// --- API PARA REQUISIÇÕES (AJUSTADA PARA FILTRAR POR FILIAL) ---
 app.get('/api/requisicoes/:status', async(req, res) => {
     const { status } = req.params;
     const { filial } = req.query;
@@ -238,7 +238,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
     let contratosPendentesQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'";
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        // Usa unaccent para ignorar acentos na comparação
         pagamentosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
         pagamentosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
         contratosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
