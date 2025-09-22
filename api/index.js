@@ -121,7 +121,7 @@ app.put('/api/fornecedores/:id', async (req, res) => {
     }
 });
 
-// --- API PARA REQUISIÇÕES (AJUSTADA PARA FILTRAR POR FILIAL) ---
+// --- API PARA REQUISIÇÕES (AGORA FILTRA CORRETAMENTE) ---
 app.get('/api/requisicoes/:status', async(req, res) => {
     const { status } = req.params;
     const { filial } = req.query;
@@ -129,7 +129,8 @@ app.get('/api/requisicoes/:status', async(req, res) => {
     let query = 'SELECT * FROM requisicoes WHERE status = $1';
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' AND (filial = $2 OR filial IS NULL OR filial = $3)'; // Ajuste na lógica para incluir nulos e vazios
+        // Usa unaccent para ignorar acentos na comparação
+        query += ' AND (LOWER(unaccent(filial)) = LOWER(unaccent($2)) OR filial IS NULL OR filial = $3)';
         params.push(filial, '');
     }
     
@@ -228,38 +229,37 @@ app.post('/api/contratos', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// --- API PARA DASHBOARD ---
+// --- API PARA DASHBOARD (AJUSTADA PARA FILTRAR POR FILIAL) ---
 app.get('/api/dashboard-stats', async (req, res) => {
     const { filial } = req.query;
+    const params = [];
     let pagamentosPendentesQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pagamento_pendente'";
     let pagamentosRealizadosQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pago'";
     let contratosRealizadosQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Ativo'";
     let contratosPendentesQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'";
-    const params = [];
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        pagamentosPendentesQuery += ` AND filial = $1`;
-        pagamentosRealizadosQuery += ` AND filial = $1`;
-        contratosRealizadosQuery += ` AND filial = $1`;
-        contratosPendentesQuery += ` AND filial = $1`;
+        // Usa unaccent para ignorar acentos na comparação
+        pagamentosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
+        pagamentosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
+        contratosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
+        contratosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
         params.push(filial);
     }
 
     try {
-        const pagamentosPendentes = db.query(pagamentosPendentesQuery, params);
-        const pagamentosRealizados = db.query(pagamentosRealizadosQuery, params);
-        const contratosRealizados = db.query(contratosRealizadosQuery, params);
-        const contratosPendentes = db.query(contratosPendentesQuery, params);
-
-        const [pagamentosPendentesResult, pagamentosRealizadosResult, contratosRealizadosResult, contratosPendentesResult] = await Promise.all([
-            pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes
+        const [pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes] = await Promise.all([
+            db.query(pagamentosPendentesQuery, params),
+            db.query(pagamentosRealizadosQuery, params),
+            db.query(contratosRealizadosQuery, params),
+            db.query(contratosPendentesQuery, params)
         ]);
 
         res.json({
-            pagamentos_pendentes: parseInt(pagamentosPendentesResult.rows[0].count),
-            pagamentos_realizados: parseInt(pagamentosRealizadosResult.rows[0].count),
-            contratos_realizados: parseInt(contratosRealizadosResult.rows[0].count),
-            contratos_pendentes: parseInt(contratosPendentesResult.rows[0].count),
+            pagamentos_pendentes: parseInt(pagamentosPendentes.rows[0].count),
+            pagamentos_realizados: parseInt(pagamentosRealizados.rows[0].count),
+            contratos_realizados: parseInt(contratosRealizados.rows[0].count),
+            contratos_pendentes: parseInt(contratosPendentes.rows[0].count),
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
