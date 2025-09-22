@@ -381,8 +381,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         await renderFilialSelect();
 
+        // Dentro da seção REQUISIÇÕES (CÓDIGO CORRIGIDO)
         const renderRequisitionsTable = async () => {
-            const requisicoes = await fetchData('requisicoes/pendentes');
+            // 1. Pega a filial salva no localStorage
+            const selectedFilial = localStorage.getItem('selectedFilial');
+
+            // 2. Prepara os parâmetros para enviar na URL
+            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
+
+            // 3. Faz a chamada à API com os parâmetros do filtro
+            //    Estou usando a rota 'requisicoes' que preparamos no backend.
+            const requisicoes = await fetchData('requisicoes', params);
+
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -391,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // O resto da sua função para renderizar a tabela continua igual...
             requisicoes.forEach(req => {
                 const row = requisitionTableBody.insertRow();
                 row.dataset.id = req.id;
