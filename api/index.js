@@ -146,11 +146,14 @@ app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-            [tipo, data, requisicao, fornecedor, filial, nf || null, oc || null, observacao || null, status || 'pendente']
+            'INSERT INTO requisicoes (tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+            [tipo || null, data || null, requisicao || null, fornecedor || null, filial || null, nf || null, oc || null, observacao || null, status || 'pendente']
         );
-        res.status(201).json({ id: result.rows[0].id });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        // Retorna o objeto da requisição completa que foi inserida
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.put('/api/requisicoes/:id/status', async (req, res) => {
