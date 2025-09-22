@@ -183,86 +183,48 @@ app.put('/api/requisicoes/:id/aprovar', async (req, res) => {
         let novoStatus = 'pagamento_pendente';
         if (acaoFornecedor.includes('XML')) {
             novoStatus = 'fiscal_xml';
-        } else if (acaoFornecedor.includes('PAGAMENTO')) {
-            novoStatus = 'fiscal_pagamento';
-        }
+        } else if (acaoForção do Fornecedor`) para `acao` (`Ação`).
+- `col-fornecedor-excluir` para o botão de exclusão (`Excluir`).
 
-        // 4. Atualizar o status da requisição
-        await db.query('UPDATE requisicoes SET status = $1 WHERE id = $2', [novoStatus, id]);
-        res.status(200).json({ message: `Requisição aprovada e direcionada para ${novoStatus}!` });
+A lógica é que o JavaScript renderiza as colunas de dados (`<td>`) na mesma ordem que os cabeçalhos (`<th>`). Se houver uma célula faltando ou fora de ordem, toda a tabela se desalinha.
 
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+Com base nas suas imagens, a sua tabela tem **9 colunas de dados** e **10 cabeçalhos**.
 
-// --- API PARA CONTRATOS (AJUSTADA PARA FILTRAR POR FILIAL) ---
-app.get('/api/contratos', async (req, res) => {
-    const { filial } = req.query;
-    let query = 'SELECT * FROM contratos';
-    const params = [];
-    
-    if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' WHERE filial = $1';
-        params.push(filial);
-    }
+### O que causou o desalinhamento
 
-    query += ' ORDER BY id DESC';
+A imagem da sua tabela mostra que, em `requisicao.html`, você tem estas colunas: `Editar`, `Tipo`, `Data`, `Requisição`, `Fornecedor`, `NF`, `OC`, `Observação`, e `Status`. Isso dá um total de 9 colunas.
 
-    try {
-        const result = await db.query(query, params);
-        res.json(result.rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
-});
+Porém, o JavaScript que renderiza as colunas `<td>` parece estar com uma contagem diferente, e os ícones de status estão fora da tabela.
 
-// Rota de criação de contrato
-app.post('/api/contratos', async (req, res) => {
-    const { numero, fornecedor, inicio, fim, valor, status, filial } = req.body;
-    try {
-        const result = await db.query(
-            'INSERT INTO contratos (numero, fornecedor, inicio, fim, valor, status, filial) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-            [numero, fornecedor, inicio, fim, valor, status, filial]
-        );
-        res.status(201).json({ id: result.rows[0].id });
-    } catch (err) { res.status(500).json({ error: err.message }); }
-});
+### Como corrigir
 
-// --- API PARA DASHBOARD (AJUSTADA PARA FILTRAR POR FILIAL) ---
-app.get('/api/dashboard-stats', async (req, res) => {
-    const { filial } = req.query;
-    const params = [];
-    let pagamentosPendentesQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pagamento_pendente'";
-    let pagamentosRealizadosQuery = "SELECT COUNT(*) FROM requisicoes WHERE status = 'pago'";
-    let contratosRealizadosQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Ativo'";
-    let contratosPendentesQuery = "SELECT COUNT(*) FROM contratos WHERE status = 'Pendente'";
+Vamos ajustar o código HTML da sua tabela para ter a estrutura correta, e a lógica de renderização no JavaScript para que ela se encaixe perfeitamente.
 
-    if (filial && filial.toLowerCase() !== 'todas') {
-        pagamentosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        pagamentosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        contratosRealizadosQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        contratosPendentesQuery += ` AND LOWER(unaccent(filial)) = LOWER(unaccent($1))`;
-        params.push(filial);
-    }
+---
 
-    try {
-        const [pagamentosPendentes, pagamentosRealizados, contratosRealizados, contratosPendentes] = await Promise.all([
-            db.query(pagamentosPendentesQuery, params),
-            db.query(pagamentosRealizadosQuery, params),
-            db.query(contratosRealizadosQuery, params),
-            db.query(contratosPendentesQuery, params)
-        ]);
+### **Arquivo `requisicao.html` (Corrigido)**
 
-        res.json({
-            pagamentos_pendentes: parseInt(pagamentosPendentes.rows[0].count),
-            pagamentos_realizados: parseInt(pagamentosRealizados.rows[0].count),
-            contratos_realizados: parseInt(contratosRealizados.rows[0].count),
-            contratos_pendentes: parseInt(contratosPendentesResult.rows[0].count),
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+Substitua toda a sua seção de tabela (`<section class="table-section">`) por este código. Eu garanti que a tabela tenha exatamente 9 colunas de cabeçalho.
 
-
-// Exporta o app para a Vercel usar
-module.exports = app;
+```html
+<section class="table-section">
+    <h3>Requisições Pendentes</h3>
+    <table id="requisition-table">
+        <thead>
+            <tr>
+                <th class="col-editar">Editar</th>
+                <th class="col-tipo">Tipo</th>
+                <th class="col-data">Data</th>
+                <th class="col-requisicao">Requisição</th>
+                <th class="col-fornecedor">Fornecedor</th>
+                <th class="col-nf">NF</th>
+                <th class="col-oc">OC</th>
+                <th class="col-observacao">Observação</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody id="requisition-table-body">
+            
+        </tbody>
+    </table>
+</section>
