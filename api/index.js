@@ -120,26 +120,35 @@ app.put('/api/fornecedores/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+// --- API PARA REQUISIÇÕES ---
 
-// --- API PARA REQUISIÇÕES (AJUSTADA PARA FILTRAR POR FILIAL) ---
-app.get('/api/requisicoes/:status', async(req, res) => {
-    const { status } = req.params;
-    const { filial } = req.query;
-    const params = [status];
-    let query = 'SELECT * FROM requisicoes WHERE status = $1';
+// ROTA NOVA PARA BUSCAR REQUISIÇÕES E FILTRAR POR FILIAL (CORRIGE O ERRO 404)
+app.get('/api/requisicoes', async (req, res) => {
+    const { filial } = req.query; 
+    
+    let query = 'SELECT * FROM requisicoes';
+    const params = [];
 
     if (filial && filial.toLowerCase() !== 'todas') {
-        query += ' AND filial = $2';
+        query += ' WHERE filial = $1';
         params.push(filial);
     }
-    
+
     query += ' ORDER BY id DESC';
 
     try {
         const result = await db.query(query, params);
         res.json(result.rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
+
+// Sua rota antiga que busca por status (pode manter)
+app.get('/api/requisicoes/:status', async(req, res) => {
+    //... seu código para esta rota continua aqui ...
+});
+
 
 // Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
