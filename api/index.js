@@ -142,7 +142,6 @@ app.get('/api/requisicoes/:status', async(req, res) => {
 });
 
 // Rota de criação de requisição
-// Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
     try {
