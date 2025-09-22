@@ -140,7 +140,38 @@ app.get('/api/requisicoes/:status', async(req, res) => {
         res.json(result.rows);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
+// --- API PARA REQUISIÇÕES ---
 
+// NOVA ROTA PARA BUSCAR TODAS AS REQUISIÇÕES E FILTRAR POR FILIAL
+app.get('/api/requisicoes', async (req, res) => {
+    const { filial } = req.query; // Pega a filial da URL (?filial=...)
+    
+    let query = 'SELECT * FROM requisicoes';
+    const params = [];
+
+    // Se uma filial foi enviada, adiciona o filtro
+    if (filial && filial.toLowerCase() !== 'todas') {
+        query += ' WHERE filial = $1';
+        params.push(filial);
+    }
+
+    query += ' ORDER BY id DESC';
+
+    try {
+        const result = await db.query(query, params);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// Rota existente que busca por status (pode manter, caso use em outro lugar)
+app.get('/api/requisicoes/:status', async(req, res) => {
+    // ... seu código antigo continua aqui ...
+});
+
+// ... resto do seu código de requisições ...
 // Rota de criação de requisição
 app.post('/api/requisicoes', async (req, res) => {
     const { tipo, data, requisicao, fornecedor, filial, nf, oc, observacao, status } = req.body;
@@ -272,3 +303,4 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
 // Exporta o app para a Vercel usar
 module.exports = app;
+
