@@ -24,15 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`${API_URL}/${fullEndpoint}`);
-            const data = await response.json(); // ler JSON apenas uma vez
             if (!response.ok) {
-                throw new Error(data.message || `Erro ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Erro ${response.status}`);
             }
-            return data;
+            return await response.json();
         } catch (error) {
             console.error(`Falha ao buscar dados de ${endpoint}:`, error);
             showNotification(error.message, 'error');
-            return null; // melhor que retornar []
+            return [];
         }
     }
 
@@ -162,21 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DASHBOARD ---
     async function setupDashboard() {
-        const stats = await fetchData('dashboard-stats');
-        if (!stats) return; // se deu erro, não continuar
-
-        const mappings = {
-            'pagamentos-pendentes': stats.pagamentos_pendentes,
-            'pagamentos-realizados': stats.pagamentos_realizados,
-            'contratos-realizados': stats.contratos_realizados,
-            'contratos-pendentes': stats.contratos_pendentes,
-        };
-
-        Object.entries(mappings).forEach(([id, value]) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = value || 0;
-        });
-    }
+        try {
+            const stats = await fetchData('dashboard-stats');
+            document.getElementById('pagamentos-pendentes').textContent = stats.pagamentos_pendentes || 0;
+            document.getElementById('pagamentos-realizados').textContent = stats.pagamentos_realizados || 0;
+            document.getElementById('contratos-realizados').textContent = stats.contratos_realizados || 0;
+            document.getElementById('contratos-pendentes').textContent = stats.contratos_pendentes || 0;
+        } catch(err) {
+            console.error("Falha ao carregar estatísticas do dashboard", err);
+        }
 
         const filialBtn = document.getElementById('open-filial-modal');
         const filialModal = document.getElementById('filial-modal');
@@ -373,34 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainHeader = document.querySelector('.main-header');
         const requisicaoFilialSelect = document.getElementById('requisicao-filial');
 
-        // Funcao para adicionar uma única linha à tabela
-        const addRequisitionToTable = (req) => {
-            const row = requisitionTableBody.insertRow(0);
-            row.dataset.id = req.id;
-            const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
-            
-            const isNFandOCFilled = req.nf && req.oc;
-            const approveButtonHtml = isNFandOCFilled 
-                ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
-                : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
-
-            row.innerHTML = `
-                <td><button class="edit-btn">✏️</button></td>
-                <td>${req.tipo || ''}</td>
-                <td>${data}</td>
-                <td>${req.requisicao || ''}</td>
-                <td>${req.fornecedor || ''}</td>
-                <td>${req.filial || ''}</td>
-                <td>${req.nf || ''}</td>
-                <td>${req.oc || ''}</td>
-                <td>${req.observacao || ''}</td>
-                <td>
-                    ${approveButtonHtml}
-                    <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
-                </td>
-            `;
-        };
-
         const renderFilialSelect = async () => {
             const filiais = await fetchData('filiais');
             if (requisicaoFilialSelect) {
@@ -416,10 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await renderFilialSelect();
 
         const renderRequisitionsTable = async () => {
-            const selectedFilial = localStorage.getItem('selectedFilial');
-            const params = selectedFilial && selectedFilial !== 'todas' ? { filial: selectedFilial } : {};
-            const requisicoes = await fetchData('requisicoes/pendentes', params);
-            
+            const requisicoes = await fetchData('requisicoes/pendentes');
             requisitionTableBody.innerHTML = '';
             
             if (requisicoes.length === 0) {
@@ -428,7 +391,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            requisicoes.forEach(req => addRequisitionToTable(req));
+            requisicoes.forEach(req => {
+                const row = requisitionTableBody.insertRow();
+                row.dataset.id = req.id;
+                const data = req.data ? new Date(req.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '';
+                
+                const isNFandOCFilled = req.nf && req.oc;
+                const approveButtonHtml = isNFandOCFilled 
+                    ? `<span class="status-icon approve-btn" data-id="${req.id}">✔️</span>`
+                    : `<span class="status-icon" style="color:#ccc;">✔️</span>`;
+
+                row.innerHTML = `
+                    <td><button class="edit-btn">✏️</button></td>
+                    <td>${req.tipo || ''}</td>
+                    <td>${data}</td>
+                    <td>${req.requisicao || ''}</td>
+                    <td>${req.fornecedor || ''}</td>
+                    <td>${req.filial || ''}</td>
+                    <td>${req.nf || ''}</td>
+                    <td>${req.oc || ''}</td>
+                    <td>${req.observacao || ''}</td>
+                    <td>
+                        ${approveButtonHtml}
+                        <span class="status-icon reject-btn" data-id="${req.id}">✖️</span>
+                    </td>
+                `;
+            });
         };
 
         if (addRequisicaoBtn && requisicaoFormSection) {
